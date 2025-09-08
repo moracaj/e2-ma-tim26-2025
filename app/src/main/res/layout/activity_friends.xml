@@ -1,0 +1,19 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+<LinearLayout
+    android:orientation="vertical" android:padding="16dp"
+    android:layout_width="match_parent" android:layout_height="wrap_content">
+
+    <TextView android:text="Add Friend by Username" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+    <EditText android:id="@+id/etFriend" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="username"/>
+    <Button android:id="@+id/btnAddFriend" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Add Friend"/>
+
+    <TextView android:text="Friends:" android:layout_width="wrap_content" android:layout_height="wrap_content" android:paddingTop="8dp"/>
+    <ListView android:id="@+id/listFriends" android:layout_width="match_parent" android:layout_height="200dp"/>
+
+    <TextView android:text="Alliance" android:layout_width="wrap_content" android:layout_height="wrap_content" android:paddingTop="16dp"/>
+    <EditText android:id="@+id/etAllianceName" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Alliance name"/>
+    <Button android:id="@+id/btnCreateAlliance" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Create/Join Alliance"/>
+    <TextView android:id="@+id/tvAllianceInfo" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="No alliance"/>
+</LinearLayout>
+</ScrollView>

@@ -1,0 +1,7 @@
+<resources>
+    <color name="avatar_red">#E53935</color>
+    <color name="avatar_blue">#1E88E5</color>
+    <color name="avatar_green">#43A047</color>
+    <color name="avatar_purple">#8E24AA</color>
+    <color name="avatar_orange">#FB8C00</color>
+</resources>
