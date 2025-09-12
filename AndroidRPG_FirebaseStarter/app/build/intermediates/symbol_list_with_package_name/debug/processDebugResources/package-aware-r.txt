@@ -3370,6 +3370,9 @@ id escape
 id etAllianceName
 id etFriend
 id etMessage
+id etNew1
+id etNew2
+id etOld
 id exitUntilCollapsed
 id expand_activities_button
 id expanded_menu
@@ -3681,6 +3684,7 @@ id triangle
 id tvAlliance
 id tvAllianceInfo
 id tvCoins
+id tvErr
 id tvLevel
 id tvPP
 id tvTitle
@@ -3864,6 +3868,7 @@ layout design_navigation_menu
 layout design_navigation_menu_item
 layout design_text_input_end_icon
 layout design_text_input_start_icon
+layout dialog_change_password
 layout ime_base_split_test_activity
 layout ime_secondary_split_test_activity
 layout item_avatar
