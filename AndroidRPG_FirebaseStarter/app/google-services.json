@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "928899171282",
+    "project_id": "androidrpgstarter",
+    "storage_bucket": "androidrpgstarter.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:928899171282:android:0fedae65c12b41fea33e0b",
+        "android_client_info": {
+          "package_name": "rs.ftn.rpgtracker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_jf-0JGl1eGQbBzgh9F3uBEZkrxy2UVY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,38 @@
+[
+    {
+        "merged": "C:\\Users\\Korisnik\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-debug-40:\\layout_activity_profile.xml.flat",
+        "source": "C:\\Users\\Korisnik\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-main-42:\\layout\\activity_profile.xml"
+    },
+    {
+        "merged": "C:\\Users\\Korisnik\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-debug-40:\\layout_activity_friends.xml.flat",
+        "source": "C:\\Users\\Korisnik\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-main-42:\\layout\\activity_friends.xml"
+    },
+    {
+        "merged": "C:\\Users\\Korisnik\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-debug-40:\\layout_activity_main.xml.flat",
+        "source": "C:\\Users\\Korisnik\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-main-42:\\layout\\activity_main.xml"
+    },
+    {
+        "merged": "C:\\Users\\Korisnik\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-debug-40:\\layout_activity_register.xml.flat",
+        "source": "C:\\Users\\Korisnik\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-main-42:\\layout\\activity_register.xml"
+    },
+    {
+        "merged": "C:\\Users\\Korisnik\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-debug-40:\\layout_activity_login.xml.flat",
+        "source": "C:\\Users\\Korisnik\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-main-42:\\layout\\activity_login.xml"
+    },
+    {
+        "merged": "rs.ftn.rpgtracker.app-debug-40:/layout_activity_register.xml.flat",
+        "source": "rs.ftn.rpgtracker.app-main-42:/layout/activity_register.xml"
+    },
+    {
+        "merged": "rs.ftn.rpgtracker.app-debug-40:/layout_activity_login.xml.flat",
+        "source": "rs.ftn.rpgtracker.app-main-42:/layout/activity_login.xml"
+    },
+    {
+        "merged": "C:\\Users\\Korisnik\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-debug-40:\\layout_activity_chat.xml.flat",
+        "source": "C:\\Users\\Korisnik\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-main-42:\\layout\\activity_chat.xml"
+    },
+    {
+        "merged": "C:\\Users\\Korisnik\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-debug-40:\\layout_activity_shop.xml.flat",
+        "source": "C:\\Users\\Korisnik\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-main-42:\\layout\\activity_shop.xml"
+    }
+]
