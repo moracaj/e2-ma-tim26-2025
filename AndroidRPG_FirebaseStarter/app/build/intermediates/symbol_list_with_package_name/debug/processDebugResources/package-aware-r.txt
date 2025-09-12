@@ -3026,6 +3026,11 @@ drawable abc_textfield_search_activated_mtrl_alpha
 drawable abc_textfield_search_default_mtrl_alpha
 drawable abc_textfield_search_material
 drawable abc_vector_test
+drawable avatar_blue
+drawable avatar_gold
+drawable avatar_green
+drawable avatar_purple
+drawable avatar_red
 drawable avd_hide_password
 drawable avd_show_password
 drawable btn_checkbox_checked_mtrl
@@ -3561,6 +3566,7 @@ id right_icon
 id right_side
 id rounded
 id row_index_key
+id rvAvatars
 id save_non_transition_alpha
 id save_overlay_view
 id sawtooth
@@ -3583,6 +3589,7 @@ id search_src_text
 id search_voice_btn
 id select_dialog_listview
 id selected
+id selectionRing
 id selection_type
 id sharedValueSet
 id sharedValueUnset
@@ -3859,6 +3866,7 @@ layout design_text_input_end_icon
 layout design_text_input_start_icon
 layout ime_base_split_test_activity
 layout ime_secondary_split_test_activity
+layout item_avatar
 layout m3_alert_dialog
 layout m3_alert_dialog_actions
 layout m3_alert_dialog_title

@@ -5,14 +5,22 @@ import androidx.annotation.Nullable; import androidx.appcompat.app.AppCompatActi
 import com.google.firebase.firestore.DocumentReference; import com.google.firebase.firestore.DocumentSnapshot; import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap; import java.util.Map;
 public class ProfileActivity extends AppCompatActivity {
-  FirebaseFirestore db; String uid;
-  ImageView imgAvatar,imgQr; TextView tvUsername,tvTitle,tvLevel,tvXP,tvPP,tvCoins; Button btnGainXP,btnChangePassword;
+  FirebaseFirestore db;
+  String uid;
+  ImageView imgAvatar,imgQr;
+  TextView tvUsername,tvTitle,tvLevel,tvXP,tvPP,tvCoins;
+  Button btnGainXP,btnChangePassword;
   @Override protected void onCreate(@Nullable Bundle savedInstanceState){
-    super.onCreate(savedInstanceState); setContentView(R.layout.activity_profile);
-    db=FirebaseFirestore.getInstance(); uid=Prefs.getUid(this);
-    imgAvatar=findViewById(R.id.imgAvatar); imgQr=findViewById(R.id.imgQr);
-    tvUsername=findViewById(R.id.tvUsername); tvTitle=findViewById(R.id.tvTitle); tvLevel=findViewById(R.id.tvLevel); tvXP=findViewById(R.id.tvXP); tvPP=findViewById(R.id.tvPP); tvCoins=findViewById(R.id.tvCoins);
-    btnGainXP=findViewById(R.id.btnGainXP); btnChangePassword=findViewById(R.id.btnChangePassword);
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_profile);
+    db=FirebaseFirestore.getInstance();
+    uid=Prefs.getUid(this);
+    imgAvatar=findViewById(R.id.imgAvatar);
+    imgQr=findViewById(R.id.imgQr);
+    tvUsername=findViewById(R.id.tvUsername);
+    tvTitle=findViewById(R.id.tvTitle); tvLevel=findViewById(R.id.tvLevel); tvXP=findViewById(R.id.tvXP); tvPP=findViewById(R.id.tvPP); tvCoins=findViewById(R.id.tvCoins);
+    btnGainXP=findViewById(R.id.btnGainXP);
+    btnChangePassword=findViewById(R.id.btnChangePassword);
     btnGainXP.setOnClickListener(v->gainXP(50));
     btnChangePassword.setOnClickListener(v->Toast.makeText(this,"Use FirebaseAuth.updatePassword()",Toast.LENGTH_SHORT).show());
     load();
@@ -20,14 +28,29 @@ public class ProfileActivity extends AppCompatActivity {
   private void load(){ db.collection("users").document(uid).get().addOnSuccessListener(this::show); }
   private void show(DocumentSnapshot doc){
     if(doc==null||!doc.exists()) return;
-    String username=doc.getString("username"); String title=doc.getString("title");
+    String username=doc.getString("username");
+    String title=doc.getString("title");
     int level=doc.getLong("level")==null?1:doc.getLong("level").intValue();
     int xp=doc.getLong("xp")==null?0:doc.getLong("xp").intValue();
     int pp=doc.getLong("pp")==null?0:doc.getLong("pp").intValue();
     int coins=doc.getLong("coins")==null?0:doc.getLong("coins").intValue();
-    tvUsername.setText(username); tvTitle.setText("Title: "+title);
+    tvUsername.setText(username);
+    tvTitle.setText("Title: "+title);
     tvLevel.setText("Level: "+level+" (need "+LevelCalculator.xpForLevel(level)+" XP)");
-    tvXP.setText("XP: "+xp); tvPP.setText("PP: "+pp); tvCoins.setText("Coins: "+coins);
+    tvXP.setText("XP: "+xp);
+    tvPP.setText("PP: "+pp);
+    tvCoins.setText("Coins: "+coins);
+
+    String avatarKey = doc.getString("avatar");
+    if (avatarKey == null || avatarKey.trim().isEmpty()) {
+      avatarKey = "avatar_blue"; // default ako nije upisano u bazi
+    }
+    int resId = getResources().getIdentifier(avatarKey, "drawable", getPackageName());
+    if (resId == 0) {
+      resId = R.drawable.avatar_blue; // fallback ako nema odgovarajućeg drawabla
+    }
+    imgAvatar.setImageResource(resId);
+
     try{ Bitmap bmp=QRCodeUtil.generate(username,800); imgQr.setImageBitmap(bmp);}catch(Exception e){ e.printStackTrace(); }
   }
   private void gainXP(int amount){

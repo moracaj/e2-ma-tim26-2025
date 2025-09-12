@@ -1,8 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-  android:layout_width="match_parent" android:layout_height="match_parent"
-  android:orientation="vertical" android:padding="16dp">
-  <TextView android:text="RPG Tracker" android:textSize="22sp"/>
-  <Button android:id="@+id/btnProfile" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="My Profile"/>
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+  <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="RPG Tracker"
+      android:textSize="22sp" />
+
+  <Button
+      android:id="@+id/btnProfile"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="My Profile" />
 
   <Button
       android:id="@+id/btnShop"
@@ -15,6 +28,16 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:text="Friends &amp; Alliance" />
-  <Button android:id="@+id/btnChat" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Alliance Chat"/>
-  <Button android:id="@+id/btnLogout" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Logout"/>
+
+  <Button
+      android:id="@+id/btnChat"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="Alliance Chat" />
+
+  <Button
+      android:id="@+id/btnLogout"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="Logout" />
 </LinearLayout>

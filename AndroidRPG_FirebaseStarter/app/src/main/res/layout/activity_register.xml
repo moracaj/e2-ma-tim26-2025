@@ -29,6 +29,22 @@
         android:layout_height="wrap_content"
         android:hint="Username" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Choose your avatar"
+        android:textStyle="bold"
+        android:layout_marginTop="12dp"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvAvatars"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:nestedScrollingEnabled="false"
+        android:paddingTop="8dp"/>
+
+
+
     <EditText
         android:id="@+id/password"
         android:layout_width="match_parent"
