@@ -1,5 +1,11 @@
 R_DEF: Internal format may change without notice
 local
+drawable avatar_blue
+drawable avatar_gold
+drawable avatar_green
+drawable avatar_purple
+drawable avatar_red
+drawable ic_crown
 id btnAddFriend
 id btnChangePassword
 id btnChat
@@ -13,11 +19,15 @@ id btnProfile
 id btnRegister
 id btnSend
 id btnShop
+id chipTitle
 id confirm
 id email
 id etAllianceName
 id etFriend
 id etMessage
+id etNew1
+id etNew2
+id etOld
 id imgAvatar
 id imgQr
 id listCatalog
@@ -25,9 +35,13 @@ id listFriends
 id listInventory
 id listMessages
 id password
+id progressXP
+id rvAvatars
+id selectionRing
 id tvAlliance
 id tvAllianceInfo
 id tvCoins
+id tvErr
 id tvLevel
 id tvPP
 id tvTitle
@@ -41,6 +55,8 @@ layout activity_main
 layout activity_profile
 layout activity_register
 layout activity_shop
+layout dialog_change_password
+layout item_avatar
 string app_name
 string gcm_defaultSenderId
 string google_api_key

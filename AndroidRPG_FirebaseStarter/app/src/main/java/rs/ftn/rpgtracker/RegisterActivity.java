@@ -4,13 +4,34 @@ import android.os.Bundle; import android.text.TextUtils; import android.widget.*
 import androidx.annotation.Nullable; import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.auth.FirebaseAuth; import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap; import java.util.Map;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import java.util.Arrays;
+import java.util.List;
 public class RegisterActivity extends AppCompatActivity {
+  RecyclerView rvAvatars;
+  String selectedAvatarKey = "avatar_blue"; // default
   EditText email,username,password,confirm; Button btnRegister; FirebaseAuth auth; FirebaseFirestore db;
   @Override protected void onCreate(@Nullable Bundle savedInstanceState){
     super.onCreate(savedInstanceState); setContentView(R.layout.activity_register);
     auth=FirebaseAuth.getInstance(); db=FirebaseFirestore.getInstance();
     email=findViewById(R.id.email); username=findViewById(R.id.username); password=findViewById(R.id.password); confirm=findViewById(R.id.confirm);
-    btnRegister=findViewById(R.id.btnRegister); btnRegister.setOnClickListener(v->register());
+    rvAvatars = findViewById(R.id.rvAvatars);
+    rvAvatars.setLayoutManager(new GridLayoutManager(this, 3));
+    List<AvatarAdapter.AvatarItem> items = Arrays.asList(
+            new AvatarAdapter.AvatarItem("avatar_blue",  getResources().getIdentifier("avatar_blue",  "drawable", getPackageName())),
+            new AvatarAdapter.AvatarItem("avatar_red",   getResources().getIdentifier("avatar_red",   "drawable", getPackageName())),
+            new AvatarAdapter.AvatarItem("avatar_green", getResources().getIdentifier("avatar_green", "drawable", getPackageName())),
+            new AvatarAdapter.AvatarItem("avatar_purple",getResources().getIdentifier("avatar_purple","drawable", getPackageName())),
+            new AvatarAdapter.AvatarItem("avatar_gold",  getResources().getIdentifier("avatar_gold",  "drawable", getPackageName()))
+    );
+    AvatarAdapter adapter = new AvatarAdapter(items, key -> selectedAvatarKey = key);
+    rvAvatars.setAdapter(adapter);
+
+
+
+    btnRegister=findViewById(R.id.btnRegister);
+    btnRegister.setOnClickListener(v->register());
   }
   private void register(){
     String e=email.getText().toString().trim(); String u=username.getText().toString().trim(); String p=password.getText().toString(); String c=confirm.getText().toString();
@@ -21,8 +42,16 @@ public class RegisterActivity extends AppCompatActivity {
         auth.getCurrentUser().sendEmailVerification();
         String uid=auth.getCurrentUser().getUid();
         Map<String,Object> data=new HashMap<>();
-        data.put("email",e); data.put("username",u); data.put("avatar","avatar_blue");
-        data.put("xp",0); data.put("pp",0); data.put("coins",200); data.put("level",1); data.put("title","Beginner"); data.put("allianceId",null);
+        data.put("email",e);
+        data.put("username",u);
+        data.put("avatar", selectedAvatarKey);
+       // data.put("avatar","avatar_blue");
+        data.put("xp",0);
+        data.put("pp",0);
+        data.put("coins",200);
+        data.put("level",1);
+        data.put("title","Unranked");
+        data.put("allianceId",null);
         db.collection("users").document(uid).set(data).addOnSuccessListener(aVoid->{ Toast.makeText(this,"Account created. Check your email to verify.",Toast.LENGTH_LONG).show(); auth.signOut(); finish(); })
            .addOnFailureListener(e2->Toast.makeText(this,e2.getMessage(),Toast.LENGTH_LONG).show());
       }
