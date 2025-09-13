@@ -5,6 +5,7 @@ drawable avatar_gold
 drawable avatar_green
 drawable avatar_purple
 drawable avatar_red
+drawable ic_crown
 id btnAddFriend
 id btnChangePassword
 id btnChat
@@ -18,6 +19,7 @@ id btnProfile
 id btnRegister
 id btnSend
 id btnShop
+id chipTitle
 id confirm
 id email
 id etAllianceName
@@ -33,6 +35,7 @@ id listFriends
 id listInventory
 id listMessages
 id password
+id progressXP
 id rvAvatars
 id selectionRing
 id tvAlliance

@@ -20,6 +20,10 @@
         "source": "C:\\Users\\Korisnik\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-main-42:\\layout\\activity_login.xml"
     },
     {
+        "merged": "rs.ftn.rpgtracker.app-debug-40:/drawable_ic_crown.xml.flat",
+        "source": "rs.ftn.rpgtracker.app-main-42:/drawable/ic_crown.xml"
+    },
+    {
         "merged": "C:\\Users\\Korisnik\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-debug-40:\\drawable_avatar_gold.png.flat",
         "source": "C:\\Users\\Korisnik\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-main-42:\\drawable\\avatar_gold.png"
     },
@@ -32,12 +36,16 @@
         "source": "C:\\Users\\Korisnik\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-main-42:\\layout\\item_avatar.xml"
     },
     {
+        "merged": "C:\\Users\\Korisnik\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-debug-40:\\layout_dialog_change_password.xml.flat",
+        "source": "C:\\Users\\Korisnik\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-main-42:\\layout\\dialog_change_password.xml"
+    },
+    {
         "merged": "C:\\Users\\Korisnik\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-debug-40:\\layout_activity_shop.xml.flat",
         "source": "C:\\Users\\Korisnik\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-main-42:\\layout\\activity_shop.xml"
     },
     {
-        "merged": "rs.ftn.rpgtracker.app-debug-40:/layout_dialog_change_password.xml.flat",
-        "source": "rs.ftn.rpgtracker.app-main-42:/layout/dialog_change_password.xml"
+        "merged": "rs.ftn.rpgtracker.app-debug-40:/layout_activity_profile.xml.flat",
+        "source": "rs.ftn.rpgtracker.app-main-42:/layout/activity_profile.xml"
     },
     {
         "merged": "C:\\Users\\Korisnik\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-debug-40:\\layout_activity_friends.xml.flat",

@@ -50,7 +50,7 @@ public class RegisterActivity extends AppCompatActivity {
         data.put("pp",0);
         data.put("coins",200);
         data.put("level",1);
-        data.put("title","Beginner");
+        data.put("title","Unranked");
         data.put("allianceId",null);
         db.collection("users").document(uid).set(data).addOnSuccessListener(aVoid->{ Toast.makeText(this,"Account created. Check your email to verify.",Toast.LENGTH_LONG).show(); auth.signOut(); finish(); })
            .addOnFailureListener(e2->Toast.makeText(this,e2.getMessage(),Toast.LENGTH_LONG).show());

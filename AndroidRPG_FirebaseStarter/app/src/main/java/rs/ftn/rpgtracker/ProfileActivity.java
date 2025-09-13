@@ -10,6 +10,10 @@ import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
+import com.google.android.material.chip.Chip;
+import androidx.core.content.ContextCompat;
+import android.content.res.ColorStateList;
+
 
 
 public class ProfileActivity extends AppCompatActivity {
@@ -19,6 +23,8 @@ public class ProfileActivity extends AppCompatActivity {
   TextView tvUsername,tvTitle,tvLevel,tvXP,tvPP,tvCoins;
   Button btnGainXP,btnChangePassword;
   FirebaseAuth auth;
+  ProgressBar progressXP;
+
   @Override protected void onCreate(@Nullable Bundle savedInstanceState){
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_profile);
@@ -28,7 +34,12 @@ public class ProfileActivity extends AppCompatActivity {
     imgAvatar=findViewById(R.id.imgAvatar);
     imgQr=findViewById(R.id.imgQr);
     tvUsername=findViewById(R.id.tvUsername);
-    tvTitle=findViewById(R.id.tvTitle); tvLevel=findViewById(R.id.tvLevel); tvXP=findViewById(R.id.tvXP); tvPP=findViewById(R.id.tvPP); tvCoins=findViewById(R.id.tvCoins);
+    tvTitle=findViewById(R.id.tvTitle);
+    tvLevel=findViewById(R.id.tvLevel);
+    progressXP = findViewById(R.id.progressXP);
+    tvXP=findViewById(R.id.tvXP);
+    tvPP=findViewById(R.id.tvPP);
+    tvCoins=findViewById(R.id.tvCoins);
     btnGainXP=findViewById(R.id.btnGainXP);
     btnChangePassword=findViewById(R.id.btnChangePassword);
     btnGainXP.setOnClickListener(v->gainXP(50));
@@ -46,8 +57,46 @@ public class ProfileActivity extends AppCompatActivity {
     int coins=doc.getLong("coins")==null?0:doc.getLong("coins").intValue();
     tvUsername.setText(username);
     tvTitle.setText("Title: "+title);
-    tvLevel.setText("Level: "+level+" (need "+LevelCalculator.xpForLevel(level)+" XP)");
-    tvXP.setText("XP: "+xp);
+    //tvLevel.setText("Level: "+level+" (need "+LevelCalculator.xpForLevel(level)+" XP)");
+    //tvXP.setText("XP: "+xp);
+    int needed = LevelCalculator.xpForLevel(level);
+    int remaining = Math.max(0, needed - xp);
+
+    tvLevel.setText(
+            "Level: " + level + " (next at " + needed + " XP, remaining " + remaining + ")"
+    );
+
+    Chip chipTitle = findViewById(R.id.chipTitle);
+
+// tekst titule
+    String title1 = doc.getString("title");
+    if (title == null || title.trim().isEmpty()) {
+      // ako koristiš “titula = pređeni nivo”, prikaži L0 pre prvog level-up-a
+      title = LevelCalculator.titleForLevel(level > 1 ? (level - 1) : 0);
+    }
+    chipTitle.setText(title);
+
+// (opciono) blaga boja čipa i bela ikonica:
+    chipTitle.setChipBackgroundColor(
+            android.content.res.ColorStateList.valueOf(
+                    androidx.core.content.ContextCompat.getColor(this, android.R.color.holo_blue_light)
+            )
+    );
+    chipTitle.setChipIconTint(
+            android.content.res.ColorStateList.valueOf(
+                    androidx.core.content.ContextCompat.getColor(this, android.R.color.white)
+            )
+    );
+
+
+
+    tvXP.setText("XP: " + xp);
+
+// progress bar 0..100 (% progresije kroz trenutni nivo)
+    int pct = Math.max(0, Math.min(100, (int)Math.round((xp * 100.0) / needed)));
+    progressXP.setMax(100);
+    progressXP.setProgress(pct);
+
     tvPP.setText("PP: "+pp);
     tvCoins.setText("Coins: "+coins);
 
@@ -63,18 +112,37 @@ public class ProfileActivity extends AppCompatActivity {
 
     try{ Bitmap bmp=QRCodeUtil.generate(username,800); imgQr.setImageBitmap(bmp);}catch(Exception e){ e.printStackTrace(); }
   }
+
+
   private void gainXP(int amount){
-    DocumentReference ref=db.collection("users").document(uid);
-    ref.get().addOnSuccessListener(doc->{
-      int level=doc.getLong("level")==null?1:doc.getLong("level").intValue();
-      int xp=doc.getLong("xp")==null?0:doc.getLong("xp").intValue();
-      int pp=doc.getLong("pp")==null?0:doc.getLong("pp").intValue();
-      xp+=amount; int needed=LevelCalculator.xpForLevel(level);
-      while(xp>=needed){ level+=1; pp+=LevelCalculator.ppForLevelReward(level-1); needed=LevelCalculator.xpForLevel(level); }
-      Map<String,Object> upd=new HashMap<>(); upd.put("xp",xp); upd.put("pp",pp); upd.put("level",level);
-      ref.update(upd).addOnSuccessListener(a->load());
+    DocumentReference ref = db.collection("users").document(uid);
+    ref.get().addOnSuccessListener(doc -> {
+      int level = doc.getLong("level")==null ? 1 : doc.getLong("level").intValue();
+      int xp    = doc.getLong("xp")==null    ? 0 : doc.getLong("xp").intValue();
+      int pp    = doc.getLong("pp")==null    ? 0 : doc.getLong("pp").intValue();
+
+      xp += amount;
+      int needed = LevelCalculator.xpForLevel(level);
+
+      String newTitle = null; // <--- NOVO
+
+      while (xp >= needed) {
+        level += 1;
+        pp += LevelCalculator.ppForLevelReward(level - 1);
+        newTitle = LevelCalculator.titleForLevel(level-1); // <--- NOVO
+        needed = LevelCalculator.xpForLevel(level);
+      }
+
+      Map<String,Object> upd = new HashMap<>();
+      upd.put("xp", xp);
+      upd.put("pp", pp);
+      upd.put("level", level);
+      if (newTitle != null) upd.put("title", newTitle); // <--- NOVO
+
+      ref.update(upd).addOnSuccessListener(a -> load());
     });
   }
+
 
 
   private void showChangePasswordDialog() {
