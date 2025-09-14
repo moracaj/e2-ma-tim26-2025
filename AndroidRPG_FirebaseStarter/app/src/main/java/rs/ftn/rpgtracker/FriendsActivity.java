@@ -12,17 +12,31 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AlertDialog;
+import com.google.firebase.firestore.DocumentReference;
 
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.*;
 import com.journeyapps.barcodescanner.ScanOptions;
 import com.journeyapps.barcodescanner.ScanContract;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.WriteBatch;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.DocumentReference;
 
-//import com.journeyapps.barcodescanner.IntentIntegrator;
-//import com.journeyapps.barcodescanner.IntentResult;
+
 import java.util.*;
 
 public class FriendsActivity extends AppCompatActivity {
+    TextView tvAllianceLeader;
+    ListView listAllianceMembers;
+
+    final List<String> memberNames = new ArrayList<>();
+    ArrayAdapter<String> membersAdapter;
+    ListenerRegistration membersReg;
+
     private final java.util.Set<String> seenInviteIds = new java.util.HashSet<>();
     private boolean invitesInitialized = false;
     ListenerRegistration msgsReg;
@@ -103,14 +117,19 @@ public class FriendsActivity extends AppCompatActivity {
     btnInvites       = findViewById(R.id.btnInvites);
     listFriends      = findViewById(R.id.listFriends);
     tvAllianceInfo   = findViewById(R.id.tvAllianceInfo);
+      tvAllianceLeader    = findViewById(R.id.tvAllianceLeader);
+      listAllianceMembers = findViewById(R.id.listAllianceMembers);
 
-    friendsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, friendNames);
+      membersAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, memberNames);
+      listAllianceMembers.setAdapter(membersAdapter);
+
+      friendsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, friendNames);
     listFriends.setAdapter(friendsAdapter);
 
     btnAddFriend.setOnClickListener(v -> addFriendByUsername());
     btnScanQR.setOnClickListener(v -> ensureCameraAndScan());
     btnCreateAlliance.setOnClickListener(v -> createAlliance());
-    btnLeaveOrDisband.setOnClickListener(v -> leaveOrDisband());
+    btnLeaveOrDisband.setOnClickListener(v -> onLeaveOrDisband());
     btnInvites.setOnClickListener(v -> showPendingInvitesDialog());
 
     listFriends.setOnItemClickListener((parent, view, position, id1) -> {
@@ -174,6 +193,7 @@ public class FriendsActivity extends AppCompatActivity {
     super.onDestroy();
     if (invitesReg != null) invitesReg.remove();
     if (msgsReg != null) msgsReg.remove();
+    if (membersReg != null) membersReg.remove();
   }
 
   private void loadMe(){
@@ -188,33 +208,75 @@ public class FriendsActivity extends AppCompatActivity {
   }
 
   private void refreshAllianceInfo(){
-    if (myAllianceId == null || myAllianceId.isEmpty()){
-      tvAllianceInfo.setText("No alliance");
-      iAmLeader = false;
-      btnLeaveOrDisband.setVisibility(View.GONE);
-        listenAllianceMessages();
-      return;
-    }
-    db.collection("alliances").document(myAllianceId).get().addOnSuccessListener(aDoc -> {
-      if (!aDoc.exists()){
-        tvAllianceInfo.setText("No alliance");
-        iAmLeader = false;
-        btnLeaveOrDisband.setVisibility(View.GONE);
-          myAllianceId = null;
-          listenAllianceMessages();
-        return;
+      if (myAllianceId == null || myAllianceId.isEmpty()){
+          tvAllianceInfo.setText("No alliance");
+          tvAllianceLeader.setText("Leader: —");
+          memberNames.clear(); membersAdapter.notifyDataSetChanged();
+          iAmLeader = false;
+          btnLeaveOrDisband.setVisibility(View.GONE);
+          detachMembersListener();
+          return;
       }
-      String name = aDoc.getString("name");
-      String leader = aDoc.getString("leaderUid");
-      iAmLeader = uid.equals(leader);
-      tvAllianceInfo.setText("Alliance: " + name + (iAmLeader?" (Leader)":""));
-      btnLeaveOrDisband.setVisibility(View.VISIBLE);
-      btnLeaveOrDisband.setText(iAmLeader ? "Disband alliance" : "Leave alliance");
-        listenAllianceMessages();
-    });
+      db.collection("alliances").document(myAllianceId).get().addOnSuccessListener(aDoc -> {
+          if (!aDoc.exists()){
+              tvAllianceInfo.setText("No alliance");
+              tvAllianceLeader.setText("Leader: —");
+              memberNames.clear(); membersAdapter.notifyDataSetChanged();
+              iAmLeader = false;
+              btnLeaveOrDisband.setVisibility(View.GONE);
+              myAllianceId = null;
+              detachMembersListener();
+              return;
+          }
+          String name   = aDoc.getString("name");
+          String leader = aDoc.getString("leaderUid");
+          iAmLeader = uid.equals(leader);
+          tvAllianceInfo.setText("Alliance: " + name + (iAmLeader ? " (Leader)" : ""));
+          btnLeaveOrDisband.setVisibility(View.VISIBLE);
+          btnLeaveOrDisband.setText(iAmLeader ? "Disband alliance" : "Leave alliance");
+
+          // -- LEADER IME --
+          if (leader != null && !leader.isEmpty()){
+              db.collection("users").document(leader).get()
+                      .addOnSuccessListener(u -> {
+                          String ln = u.getString("username");
+                          tvAllianceLeader.setText("Leader: " + (ln == null ? "—" : ln));
+                      });
+          } else {
+              tvAllianceLeader.setText("Leader: —");
+          }
+
+          // -- LISTA ČLANOVA --
+          listenMembers();   // (re)attach snapshot listener
+      });
   }
 
-  private void loadFriends(){
+    private void listenMembers(){
+        detachMembersListener();
+        if (myAllianceId == null || myAllianceId.isEmpty()) return;
+
+        membersReg = db.collection("alliances").document(myAllianceId)
+                .collection("members")
+                .orderBy("username", Query.Direction.ASCENDING)
+                .addSnapshotListener((qs, e) -> {
+                    if (e != null || qs == null) return;
+                    memberNames.clear();
+                    for (DocumentSnapshot d : qs.getDocuments()){
+                        String n = d.getString("username");
+                        String role = d.getString("role");
+                        memberNames.add((n == null ? "?" : n) + ("leader".equals(role) ? " (Leader)" : ""));
+                    }
+                    membersAdapter.notifyDataSetChanged();
+                });
+    }
+
+    private void detachMembersListener(){
+        if (membersReg != null) { membersReg.remove(); membersReg = null; }
+    }
+
+
+
+    private void loadFriends(){
     db.collection("users").document(uid).collection("friends")
             .orderBy("username", Query.Direction.ASCENDING)
             .addSnapshotListener((qs, e) -> {
@@ -336,50 +398,80 @@ public class FriendsActivity extends AppCompatActivity {
     return m;
   }
 
-  private void leaveOrDisband(){
-    if (myAllianceId == null || myAllianceId.isEmpty()) return;
-    db.collection("alliances").document(myAllianceId).get().addOnSuccessListener(doc -> {
-      boolean missionActive = Boolean.TRUE.equals(doc.getBoolean("missionActive"));
-      if (iAmLeader){
-        if (missionActive){
-          Toast.makeText(this,"Mission active: cannot disband.",Toast.LENGTH_SHORT).show(); return;
-        }
-        new AlertDialog.Builder(this)
-                .setTitle("Disband alliance?")
-                .setMessage("This will remove all members.")
-                .setPositiveButton("Disband", (d, which) -> disband(myAllianceId))
-                .setNegativeButton("Cancel", null).show();
-      } else {
-        if (missionActive){
-          Toast.makeText(this,"Mission active: cannot leave.",Toast.LENGTH_SHORT).show(); return;
-        }
-        WriteBatch b = db.batch();
-        b.delete(db.collection("alliances").document(myAllianceId).collection("members").document(uid));
-        b.update(db.collection("users").document(uid), "allianceId", FieldValue.delete());
-        b.commit().addOnSuccessListener(v -> {
-          myAllianceId = null;
-          refreshAllianceInfo();
-          Toast.makeText(this, "Left alliance", Toast.LENGTH_SHORT).show();
-        });
-      }
-    });
-  }
+    private void onLeaveOrDisband(){
+        if (myAllianceId == null || myAllianceId.isEmpty()) return;
 
-  private void disband(String allianceId){
-    db.collection("alliances").document(allianceId).collection("members").get().addOnSuccessListener(q -> {
-      WriteBatch b = db.batch();
-      for (DocumentSnapshot d : q){
-        String mu = d.getId();
-        b.update(db.collection("users").document(mu), "allianceId", FieldValue.delete());
-        b.delete(d.getReference());
-      }
-      b.delete(db.collection("alliances").document(allianceId));
-      b.commit().addOnSuccessListener(v -> {
-        myAllianceId = null; iAmLeader = false; refreshAllianceInfo();
-        Toast.makeText(this,"Alliance disbanded",Toast.LENGTH_SHORT).show();
-      });
-    });
-  }
+        if (!iAmLeader) {
+            // Leave kao član
+            new androidx.appcompat.app.AlertDialog.Builder(this)
+                    .setTitle("Leave alliance?")
+                    .setMessage("Are you sure you want to leave the alliance?")
+                    .setPositiveButton("Leave", (d,w) -> {
+                        WriteBatch b = db.batch();
+                        // 1) ukloni moje članstvo iz members
+                        b.delete(db.collection("alliances").document(myAllianceId)
+                                .collection("members").document(uid));
+                        // 2) očisti mi allianceId
+                        b.update(db.collection("users").document(uid), "allianceId", null);
+                        b.commit().addOnSuccessListener(v -> {
+                            myAllianceId = null;
+                            refreshAllianceInfo();
+                            Toast.makeText(this, "You left the alliance.", Toast.LENGTH_SHORT).show();
+                        }).addOnFailureListener(e ->
+                                Toast.makeText(this, "Leave failed: " + e.getMessage(), Toast.LENGTH_LONG).show());
+                    })
+                    .setNegativeButton("Cancel", null).show();
+            return;
+        }
+
+        // Disband kao vođa
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Disband alliance?")
+                .setMessage("This will remove the alliance and all members will be detached.")
+                .setPositiveButton("Disband", (d,w) -> disbandAllianceAsLeader())
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void disbandAllianceAsLeader(){
+        final DocumentReference aRef = db.collection("alliances").document(myAllianceId);
+
+        // (opciono) blokada ako je misija aktivna
+        aRef.get().addOnSuccessListener(doc -> {
+            Boolean missionActive = doc.getBoolean("missionActive");
+            if (Boolean.TRUE.equals(missionActive)) {
+                Toast.makeText(this, "Mission active — cannot disband.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // 1) pročitaj sve članove
+            aRef.collection("members").get().addOnSuccessListener(membersSnap -> {
+                WriteBatch b = db.batch();
+
+                // 2) svakom članu: obriši članstvo + očisti allianceId (ovde rules sada dopuštaju)
+                for (DocumentSnapshot m : membersSnap.getDocuments()){
+                    String memberUid = m.getId();
+                    // delete member doc
+                    b.delete(m.getReference());
+                    // clear allianceId kod usera
+                    b.update(db.collection("users").document(memberUid), "allianceId", null);
+                }
+
+                // 3) obriši sam dokument saveza
+                b.delete(aRef);
+
+                b.commit().addOnSuccessListener(v -> {
+                    myAllianceId = null;
+                    iAmLeader = false;
+                    refreshAllianceInfo();
+                    Toast.makeText(this, "Alliance disbanded.", Toast.LENGTH_SHORT).show();
+                }).addOnFailureListener(e ->
+                        Toast.makeText(this, "Disband failed: " + e.getMessage(), Toast.LENGTH_LONG).show());
+
+            }).addOnFailureListener(e ->
+                    Toast.makeText(this, "Load members failed: " + e.getMessage(), Toast.LENGTH_LONG).show());
+        });
+    }
 
     private void showPendingInvitesDialog() {
         db.collection("users").document(uid).collection("allianceInvites")
@@ -482,37 +574,85 @@ public class FriendsActivity extends AppCompatActivity {
     }
 
     private void acceptInvite(DocumentSnapshot inv) {
-        final String allianceId = String.valueOf(inv.getString("allianceId"));
-        final DocumentReference meRef = db.collection("users").document(uid);
-        final DocumentReference aRef  = db.collection("alliances").document(allianceId);
+        final String newAid   = String.valueOf(inv.getString("allianceId"));
+        final String newName  = String.valueOf(inv.getString("allianceName"));
+        final DocumentReference meRef  = db.collection("users").document(uid);
+        final DocumentReference newARef = db.collection("alliances").document(newAid);
 
-        db.runTransaction(tx -> {
-            DocumentSnapshot me = tx.get(meRef);
-            if (me.exists()) {
-                String currentAlliance = me.getString("allianceId");
-                if (currentAlliance != null && !currentAlliance.isEmpty())
-                    throw new RuntimeException("Already in an alliance");
+        meRef.get().addOnSuccessListener(me -> {
+            final String myName = String.valueOf(me.getString("username"));
+            final String oldAid = me.getString("allianceId");
+
+            // Ako već nisi ni u jednom savezu (ili je isti savez) -> klasično pridruživanje
+            if (oldAid == null || oldAid.isEmpty() || newAid.equals(oldAid)) {
+                joinAllianceTx(inv, newARef, meRef, myName, newAid, null);
+                return;
             }
 
-            DocumentSnapshot a = tx.get(aRef);
-            if (!a.exists()) throw new RuntimeException("Alliance no longer exists");
-            Boolean missionActive = a.getBoolean("missionActive");
-            if (Boolean.TRUE.equals(missionActive)) throw new RuntimeException("Mission active");
+            // U starom si savezu – pitaj da li želi da pređe i napusti stari
+            final DocumentReference oldARef = db.collection("alliances").document(oldAid);
+            oldARef.get().addOnSuccessListener(oldA -> {
+                String oldName = oldA.exists() ? String.valueOf(oldA.getString("name")) : "(current)";
+                boolean iAmLeaderThere = oldA.exists() && uid.equals(oldA.getString("leaderUid"));
 
-            String myName = String.valueOf(me.getString("username"));
-            tx.set(aRef.collection("members").document(uid), member(uid, myName, "member"));
-            tx.update(meRef, "allianceId", allianceId);
+                if (iAmLeaderThere) {
+                    Toast.makeText(this,
+                            "You are the leader of \"" + oldName + "\". Disband that alliance first.",
+                            Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                new AlertDialog.Builder(this)
+                        .setTitle("Switch alliance?")
+                        .setMessage("You are in \"" + oldName + "\".\nJoin \"" + newName + "\" and leave your current alliance?")
+                        .setPositiveButton("Join new", (d,w) ->
+                                joinAllianceTx(inv, newARef, meRef, myName, newAid, oldARef))
+                        .setNegativeButton("Cancel", null)
+                        .show();
+            });
+        });
+    }
+
+    private void joinAllianceTx(DocumentSnapshot inv,
+                                DocumentReference newARef,
+                                DocumentReference meRef,
+                                String myName,
+                                String newAid,
+                                @Nullable DocumentReference oldARef) {
+
+        db.runTransaction(tx -> {
+            // novi savez mora da postoji
+            DocumentSnapshot aNew = tx.get(newARef);
+            if (!aNew.exists()) throw new RuntimeException("Alliance no longer exists");
+
+            // ako je prosleđen stari – izbriši članstvo tamo
+            if (oldARef != null) {
+                DocumentSnapshot aOld = tx.get(oldARef);
+                if (aOld.exists()) {
+                    // dodatna zaštita: vođa ne sme da ode
+                    String leaderUid = aOld.getString("leaderUid");
+                    if (uid.equals(leaderUid))
+                        throw new RuntimeException("Leader must disband current alliance");
+                    tx.delete(oldARef.collection("members").document(uid));
+                }
+            }
+
+            // upiši novo članstvo + user.allianceId + invite status
+            tx.set(newARef.collection("members").document(uid),
+                    member(uid, myName, "member"));
+            tx.update(meRef, "allianceId", newAid);
             tx.update(inv.getReference(), "status", "accepted");
             return null;
         }).addOnSuccessListener(v -> {
-            myAllianceId = allianceId;
+            myAllianceId = newAid;
             iAmLeader = false;
             refreshAllianceInfo();
-            Toast.makeText(this, "Joined alliance", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Joined " + inv.getString("allianceName"), Toast.LENGTH_SHORT).show();
         }).addOnFailureListener(e ->
                 Toast.makeText(this, "Accept failed: " + e.getMessage(), Toast.LENGTH_LONG).show()
         );
     }
+
 
     private void listenAllianceMessages() {
         // skini stari listener ako se promenio savez / logout

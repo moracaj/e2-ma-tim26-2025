@@ -3442,6 +3442,7 @@ int id light 0x7f080111
 int id line1 0x7f080112
 int id line3 0x7f080113
 int id linear 0x7f080114
+int id listAllianceMembers 0x7f080243
 int id listCatalog 0x7f080115
 int id listFriends 0x7f080116
 int id listInventory 0x7f080117
@@ -3690,6 +3691,7 @@ int id transition_transform 0x7f080209
 int id triangle 0x7f08020a
 int id tvAlliance 0x7f08020b
 int id tvAllianceInfo 0x7f08020c
+int id tvAllianceLeader 0x7f080244
 int id tvBadges 0x7f08023f
 int id tvCoins 0x7f08020d
 int id tvEquipAccessory 0x7f080240
@@ -3697,6 +3699,7 @@ int id tvEquipArmor 0x7f080241
 int id tvEquipWeapon 0x7f080242
 int id tvErr 0x7f08020e
 int id tvLevel 0x7f08020f
+int id tvMembersLabel 0x7f080245
 int id tvPP 0x7f080210
 int id tvText 0x7f080211
 int id tvTime 0x7f080212

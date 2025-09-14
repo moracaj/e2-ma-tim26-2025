@@ -35,6 +35,7 @@ id imgAvatar
 id imgQr
 id ivAvatar
 id ivQr
+id listAllianceMembers
 id listCatalog
 id listFriends
 id listInventory
@@ -45,6 +46,7 @@ id rvAvatars
 id selectionRing
 id tvAlliance
 id tvAllianceInfo
+id tvAllianceLeader
 id tvBadges
 id tvCoins
 id tvEquipAccessory
@@ -52,6 +54,7 @@ id tvEquipArmor
 id tvEquipWeapon
 id tvErr
 id tvLevel
+id tvMembersLabel
 id tvPP
 id tvText
 id tvTime

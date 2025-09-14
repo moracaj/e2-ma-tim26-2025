@@ -3443,6 +3443,7 @@ id light
 id line1
 id line3
 id linear
+id listAllianceMembers
 id listCatalog
 id listFriends
 id listInventory
@@ -3691,6 +3692,7 @@ id transition_transform
 id triangle
 id tvAlliance
 id tvAllianceInfo
+id tvAllianceLeader
 id tvBadges
 id tvCoins
 id tvEquipAccessory
@@ -3698,6 +3700,7 @@ id tvEquipArmor
 id tvEquipWeapon
 id tvErr
 id tvLevel
+id tvMembersLabel
 id tvPP
 id tvText
 id tvTime

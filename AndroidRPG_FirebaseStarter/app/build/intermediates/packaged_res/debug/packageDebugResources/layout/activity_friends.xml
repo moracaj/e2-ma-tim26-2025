@@ -94,6 +94,28 @@
         android:layout_height="wrap_content"
         android:paddingTop="8dp" />
 
+    <TextView
+        android:id="@+id/tvAllianceLeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Leader: —"
+        android:paddingTop="4dp" />
+
+    <TextView
+        android:id="@+id/tvMembersLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Members"
+        android:textStyle="bold"
+        android:paddingTop="6dp" />
+
+    <ListView
+        android:id="@+id/listAllianceMembers"
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
+        android:dividerHeight="1dp" />
+
+
     <Button
         android:id="@+id/btnLeaveOrDisband"
         android:layout_width="match_parent"
