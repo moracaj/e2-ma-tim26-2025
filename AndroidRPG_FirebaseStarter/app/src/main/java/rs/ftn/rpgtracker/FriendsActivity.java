@@ -522,11 +522,28 @@ public class FriendsActivity extends AppCompatActivity {
                 b.set(aDoc.getReference().collection("members").document(uid), member(uid, myUsername, "member"));
                 b.update(db.collection("users").document(uid), "allianceId", allianceId);
                 b.update(inv.getReference(), "status", "accepted");
-                b.commit().addOnSuccessListener(v -> {
-                  myAllianceId = allianceId;
-                  refreshAllianceInfo();
-                  Toast.makeText(this,"Joined alliance",Toast.LENGTH_SHORT).show();
-                });
+                  b.commit().addOnSuccessListener(v -> {
+                      myAllianceId = allianceId;
+                      refreshAllianceInfo();
+                      Toast.makeText(this,"Joined alliance",Toast.LENGTH_SHORT).show();
+
+                      // === NOVO: obavesti kreatora saveza ko je prihvatio ===
+                      String fromUid = inv.getString("fromUid");
+                      String aName   = inv.getString("allianceName");
+                      if (fromUid != null && !fromUid.isEmpty()) {
+                          Map<String, Object> event = new HashMap<>();
+                          event.put("type", "inviteAccepted");
+                          event.put("byUid", uid);
+                          event.put("byUsername", myUsername);
+                          event.put("allianceId", allianceId);
+                          event.put("allianceName", aName);
+                          event.put("ts", com.google.firebase.Timestamp.now());
+
+                          db.collection("users").document(fromUid)
+                                  .collection("inbox").add(event);
+                      }
+                  });
+
               })
               .setNegativeButton("Decline", (d, w) -> inv.getReference().update("status","declined"))
               .show();
@@ -648,6 +665,25 @@ public class FriendsActivity extends AppCompatActivity {
             iAmLeader = false;
             refreshAllianceInfo();
             Toast.makeText(this, "Joined " + inv.getString("allianceName"), Toast.LENGTH_SHORT).show();
+
+            // === NOVO: obavesti kreatora saveza ko je prihvatio ===
+            String fromUid = inv.getString("fromUid");
+            String aName   = inv.getString("allianceName");
+            // myName je prosleđen parametar metodu; ako je prazan, fallback na myUsername polje
+            String byUser  = (myName != null && !myName.isEmpty()) ? myName : myUsername;
+
+            if (fromUid != null && !fromUid.isEmpty()) {
+                Map<String, Object> event = new HashMap<>();
+                event.put("type", "inviteAccepted");
+                event.put("byUid", uid);
+                event.put("byUsername", byUser);
+                event.put("allianceId", newAid);
+                event.put("allianceName", aName);
+                event.put("ts", com.google.firebase.Timestamp.now());
+
+                db.collection("users").document(fromUid)
+                        .collection("inbox").add(event);
+            }
         }).addOnFailureListener(e ->
                 Toast.makeText(this, "Accept failed: " + e.getMessage(), Toast.LENGTH_LONG).show()
         );

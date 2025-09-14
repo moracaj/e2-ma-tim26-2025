@@ -59,6 +59,11 @@
         <activity android:name="rs.ftn.rpgtracker.FriendsActivity" />
         <activity android:name="rs.ftn.rpgtracker.ChatActivity" />
         <activity android:name="rs.ftn.rpgtracker.ViewProfileActivity" />
+
+        <receiver
+            android:name="rs.ftn.rpgtracker.InviteActionReceiver"
+            android:exported="false" />
+
         <activity
             android:name="rs.ftn.rpgtracker.LoginActivity"
             android:exported="true" >

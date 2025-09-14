@@ -9,7 +9,7 @@ import android.Manifest; // <— NOVO
 import androidx.core.app.ActivityCompat; // <— NOVO
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-
+import android.app.PendingIntent;
 public class Notifications {
     public static final String CH_INVITES = "invites";
     public static final String CH_CHAT    = "chat_high"; // HIGH važnost
@@ -46,6 +46,35 @@ public class Notifications {
                 .setOngoing(ongoing)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentIntent(pi);
+
+        if (Build.VERSION.SDK_INT >= 33 &&
+                ActivityCompat.checkSelfPermission(ctx, Manifest.permission.POST_NOTIFICATIONS)
+                        != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        if (!NotificationManagerCompat.from(ctx).areNotificationsEnabled()) return;
+
+        NotificationManagerCompat.from(ctx).notify(id, b.build());
+    }
+    public static void showInviteWithActions(
+            Context ctx,
+            int id,
+            String title,
+            String text,
+            PendingIntent tap,
+            PendingIntent acceptAction,
+            PendingIntent declineAction
+    ) {
+        NotificationCompat.Builder b = new NotificationCompat.Builder(ctx, CH_INVITES)
+                .setSmallIcon(android.R.drawable.ic_dialog_info)
+                .setContentTitle(title)
+                .setContentText(text)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
+                .setOngoing(true) // dok korisnik ne prihvati/odbijе, ne može da “skine” notifikaciju
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setContentIntent(tap)
+                .addAction(new NotificationCompat.Action(0, "Accept",  acceptAction))
+                .addAction(new NotificationCompat.Action(0, "Decline", declineAction));
 
         if (Build.VERSION.SDK_INT >= 33 &&
                 ActivityCompat.checkSelfPermission(ctx, Manifest.permission.POST_NOTIFICATIONS)
