@@ -43,6 +43,7 @@
         android:required="false" />
 
     <application
+        android:name="rs.ftn.rpgtracker.App"
         android:allowBackup="true"
         android:appComponentFactory="androidx.core.app.CoreComponentFactory"
         android:debuggable="true"

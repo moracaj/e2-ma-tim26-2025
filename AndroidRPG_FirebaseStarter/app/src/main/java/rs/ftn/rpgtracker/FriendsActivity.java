@@ -173,6 +173,7 @@ public class FriendsActivity extends AppCompatActivity {
   @Override protected void onDestroy(){
     super.onDestroy();
     if (invitesReg != null) invitesReg.remove();
+    if (msgsReg != null) msgsReg.remove();
   }
 
   private void loadMe(){
@@ -181,6 +182,7 @@ public class FriendsActivity extends AppCompatActivity {
         myUsername = doc.getString("username");
         myAllianceId = doc.getString("allianceId");
         refreshAllianceInfo();
+        listenAllianceMessages();
       }
     });
   }
@@ -190,6 +192,7 @@ public class FriendsActivity extends AppCompatActivity {
       tvAllianceInfo.setText("No alliance");
       iAmLeader = false;
       btnLeaveOrDisband.setVisibility(View.GONE);
+        listenAllianceMessages();
       return;
     }
     db.collection("alliances").document(myAllianceId).get().addOnSuccessListener(aDoc -> {
@@ -197,6 +200,8 @@ public class FriendsActivity extends AppCompatActivity {
         tvAllianceInfo.setText("No alliance");
         iAmLeader = false;
         btnLeaveOrDisband.setVisibility(View.GONE);
+          myAllianceId = null;
+          listenAllianceMessages();
         return;
       }
       String name = aDoc.getString("name");
@@ -205,6 +210,7 @@ public class FriendsActivity extends AppCompatActivity {
       tvAllianceInfo.setText("Alliance: " + name + (iAmLeader?" (Leader)":""));
       btnLeaveOrDisband.setVisibility(View.VISIBLE);
       btnLeaveOrDisband.setText(iAmLeader ? "Disband alliance" : "Leave alliance");
+        listenAllianceMessages();
     });
   }
 
@@ -508,6 +514,48 @@ public class FriendsActivity extends AppCompatActivity {
         );
     }
 
+    private void listenAllianceMessages() {
+        // skini stari listener ako se promenio savez / logout
+        if (msgsReg != null) { msgsReg.remove(); msgsReg = null; }
+        seenMsgIds.clear();
+        msgsInitialized = false;
+
+        if (myAllianceId == null || myAllianceId.isEmpty()) return;
+
+        msgsReg = db.collection("alliances").document(myAllianceId)
+                .collection("messages")
+                .orderBy("ts", Query.Direction.ASCENDING)
+                .addSnapshotListener((qs, e) -> {
+                    if (e != null || qs == null) return;
+
+                    if (!msgsInitialized) {
+                        // ignorisi istoriju pri prvom ucitavanju
+                        for (DocumentSnapshot d : qs.getDocuments()) seenMsgIds.add(d.getId());
+                        msgsInitialized = true;
+                        return;
+                    }
+
+                    for (DocumentChange ch : qs.getDocumentChanges()) {
+                        if (ch.getType() != DocumentChange.Type.ADDED) continue;
+
+                        DocumentSnapshot d = ch.getDocument();
+                        String mid   = d.getId();
+                        String fromU = String.valueOf(d.getString("senderUid"));
+                        String fromN = String.valueOf(d.getString("senderUsername"));
+                        String text  = String.valueOf(d.getString("text"));
+
+                        // notifikuj samo ako poruka NIJE moja i ako je nova
+                        if (!uid.equals(fromU) && seenMsgIds.add(mid)) {
+                            Intent tap = new Intent(this, ChatActivity.class);
+                            Notifications.show(
+                                    this, Notifications.CH_CHAT,
+                                    Math.abs(mid.hashCode()),
+                                    fromN, text, tap, false
+                            );
+                        }
+                    }
+                });
+    }
 
 
 }

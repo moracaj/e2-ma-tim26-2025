@@ -98,11 +98,7 @@ public class ChatActivity extends AppCompatActivity {
     db.collection("alliances").document(allianceId).collection("messages")
             .add(msg).addOnSuccessListener(ref -> {
               etMessage.setText("");
-              Notifications.show(this, Notifications.CH_CHAT,
-                      Objects.hash(ref.getId()),
-                      "New message",
-                      username + ": " + text,
-                      getIntent(), false);
+
             });
   }
 }

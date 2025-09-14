@@ -12,21 +12,20 @@ import androidx.core.app.NotificationManagerCompat;
 
 public class Notifications {
     public static final String CH_INVITES = "invites";
-    public static final String CH_CHAT    = "chat";
+    public static final String CH_CHAT    = "chat_high"; // HIGH važnost
 
     public static void createChannels(Context ctx){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
             NotificationManager nm = ctx.getSystemService(NotificationManager.class);
+
             if (nm.getNotificationChannel(CH_INVITES) == null) {
                 NotificationChannel ch = new NotificationChannel(
                         CH_INVITES, "Alliance Invites", NotificationManager.IMPORTANCE_HIGH);
-                ch.setDescription("Invitations to join an alliance");
                 nm.createNotificationChannel(ch);
             }
             if (nm.getNotificationChannel(CH_CHAT) == null) {
                 NotificationChannel ch = new NotificationChannel(
-                        CH_CHAT, "Alliance Chat", NotificationManager.IMPORTANCE_DEFAULT);
-                ch.setDescription("New messages in alliance chat");
+                        CH_CHAT, "Alliance Chat", NotificationManager.IMPORTANCE_HIGH);
                 nm.createNotificationChannel(ch);
             }
         }
@@ -34,31 +33,26 @@ public class Notifications {
 
     public static void show(Context ctx, String channelId, int id,
                             String title, String text, Intent tapIntent, boolean ongoing){
-
         PendingIntent pi = PendingIntent.getActivity(
                 ctx, id, tapIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         NotificationCompat.Builder b = new NotificationCompat.Builder(ctx, channelId)
-                .setSmallIcon(android.R.drawable.ic_dialog_info)
+                .setSmallIcon(android.R.drawable.ic_dialog_email)
                 .setContentTitle(title)
                 .setContentText(text)
-                .setContentIntent(pi)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
                 .setAutoCancel(!ongoing)
                 .setOngoing(ongoing)
-                .setPriority(NotificationCompat.PRIORITY_HIGH);
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setContentIntent(pi);
 
-        // ✅ Android 13+ requires POST_NOTIFICATIONS permission
         if (Build.VERSION.SDK_INT >= 33 &&
                 ActivityCompat.checkSelfPermission(ctx, Manifest.permission.POST_NOTIFICATIONS)
                         != PackageManager.PERMISSION_GRANTED) {
-            return; // nema dozvole → ne zovi notify da ne bi bacio SecurityException
-        }
-
-        // (opciono) ako su notifikacije globalno isključene na uređaju:
-        if (!NotificationManagerCompat.from(ctx).areNotificationsEnabled()) {
             return;
         }
+        if (!NotificationManagerCompat.from(ctx).areNotificationsEnabled()) return;
 
         NotificationManagerCompat.from(ctx).notify(id, b.build());
     }

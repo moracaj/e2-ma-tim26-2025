@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from C:\Users\Korisnik\Desktop\jelena\mobilne\AndroidRPGStarter\AndroidRPG_FirebaseStarter\app\src\main\AndroidManifest.xml:2:1-23:12
-INJECTED from C:\Users\Korisnik\Desktop\jelena\mobilne\AndroidRPGStarter\AndroidRPG_FirebaseStarter\app\src\main\AndroidManifest.xml:2:1-23:12
-INJECTED from C:\Users\Korisnik\Desktop\jelena\mobilne\AndroidRPGStarter\AndroidRPG_FirebaseStarter\app\src\main\AndroidManifest.xml:2:1-23:12
-INJECTED from C:\Users\Korisnik\Desktop\jelena\mobilne\AndroidRPGStarter\AndroidRPG_FirebaseStarter\app\src\main\AndroidManifest.xml:2:1-23:12
+ADDED from C:\Users\Korisnik\Desktop\jelena\mobilne\AndroidRPGStarter\AndroidRPG_FirebaseStarter\app\src\main\AndroidManifest.xml:2:1-24:12
+INJECTED from C:\Users\Korisnik\Desktop\jelena\mobilne\AndroidRPGStarter\AndroidRPG_FirebaseStarter\app\src\main\AndroidManifest.xml:2:1-24:12
+INJECTED from C:\Users\Korisnik\Desktop\jelena\mobilne\AndroidRPGStarter\AndroidRPG_FirebaseStarter\app\src\main\AndroidManifest.xml:2:1-24:12
+INJECTED from C:\Users\Korisnik\Desktop\jelena\mobilne\AndroidRPGStarter\AndroidRPG_FirebaseStarter\app\src\main\AndroidManifest.xml:2:1-24:12
 MERGED from [com.google.firebase:firebase-auth:23.0.0] C:\Users\Korisnik\.gradle\caches\9.0-milestone-1\transforms\43daf3776fcfd12a1636f4ddd915d017\transformed\jetified-firebase-auth-23.0.0\AndroidManifest.xml:17:1-75:12
 MERGED from [com.google.firebase:firebase-firestore:25.1.0] C:\Users\Korisnik\.gradle\caches\9.0-milestone-1\transforms\828a66436dd665955d26dc722bff935a\transformed\jetified-firebase-firestore-25.1.0\AndroidManifest.xml:2:1-26:12
 MERGED from [com.google.android.material:material:1.12.0] C:\Users\Korisnik\.gradle\caches\9.0-milestone-1\transforms\776ce13fd4bc3c27b0c622dfd0ce8cec\transformed\material-1.12.0\AndroidManifest.xml:17:1-24:12
@@ -107,8 +107,8 @@ MERGED from [com.journeyapps:zxing-android-embedded:4.3.0] C:\Users\Korisnik\.gr
 	android:name
 		ADDED from C:\Users\Korisnik\Desktop\jelena\mobilne\AndroidRPGStarter\AndroidRPG_FirebaseStarter\app\src\main\AndroidManifest.xml:7:15-53
 application
-ADDED from C:\Users\Korisnik\Desktop\jelena\mobilne\AndroidRPGStarter\AndroidRPG_FirebaseStarter\app\src\main\AndroidManifest.xml:8:3-22:17
-INJECTED from C:\Users\Korisnik\Desktop\jelena\mobilne\AndroidRPGStarter\AndroidRPG_FirebaseStarter\app\src\main\AndroidManifest.xml:8:3-22:17
+ADDED from C:\Users\Korisnik\Desktop\jelena\mobilne\AndroidRPGStarter\AndroidRPG_FirebaseStarter\app\src\main\AndroidManifest.xml:8:3-23:17
+INJECTED from C:\Users\Korisnik\Desktop\jelena\mobilne\AndroidRPGStarter\AndroidRPG_FirebaseStarter\app\src\main\AndroidManifest.xml:8:3-23:17
 MERGED from [com.google.firebase:firebase-auth:23.0.0] C:\Users\Korisnik\.gradle\caches\9.0-milestone-1\transforms\43daf3776fcfd12a1636f4ddd915d017\transformed\jetified-firebase-auth-23.0.0\AndroidManifest.xml:28:5-73:19
 MERGED from [com.google.firebase:firebase-auth:23.0.0] C:\Users\Korisnik\.gradle\caches\9.0-milestone-1\transforms\43daf3776fcfd12a1636f4ddd915d017\transformed\jetified-firebase-auth-23.0.0\AndroidManifest.xml:28:5-73:19
 MERGED from [com.google.firebase:firebase-firestore:25.1.0] C:\Users\Korisnik\.gradle\caches\9.0-milestone-1\transforms\828a66436dd665955d26dc722bff935a\transformed\jetified-firebase-firestore-25.1.0\AndroidManifest.xml:13:5-24:19
@@ -165,6 +165,8 @@ MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\Korisnik\.gradle\c
 		ADDED from C:\Users\Korisnik\Desktop\jelena\mobilne\AndroidRPGStarter\AndroidRPG_FirebaseStarter\app\src\main\AndroidManifest.xml:8:16-42
 	android:theme
 		ADDED from C:\Users\Korisnik\Desktop\jelena\mobilne\AndroidRPGStarter\AndroidRPG_FirebaseStarter\app\src\main\AndroidManifest.xml:8:97-136
+	android:name
+		ADDED from C:\Users\Korisnik\Desktop\jelena\mobilne\AndroidRPGStarter\AndroidRPG_FirebaseStarter\app\src\main\AndroidManifest.xml:8:137-156
 activity#rs.ftn.rpgtracker.RegisterActivity
 ADDED from C:\Users\Korisnik\Desktop\jelena\mobilne\AndroidRPGStarter\AndroidRPG_FirebaseStarter\app\src\main\AndroidManifest.xml:9:5-50
 	android:name
@@ -194,21 +196,21 @@ ADDED from C:\Users\Korisnik\Desktop\jelena\mobilne\AndroidRPGStarter\AndroidRPG
 	android:name
 		ADDED from C:\Users\Korisnik\Desktop\jelena\mobilne\AndroidRPGStarter\AndroidRPG_FirebaseStarter\app\src\main\AndroidManifest.xml:15:15-50
 activity#rs.ftn.rpgtracker.LoginActivity
-ADDED from C:\Users\Korisnik\Desktop\jelena\mobilne\AndroidRPGStarter\AndroidRPG_FirebaseStarter\app\src\main\AndroidManifest.xml:16:5-21:16
+ADDED from C:\Users\Korisnik\Desktop\jelena\mobilne\AndroidRPGStarter\AndroidRPG_FirebaseStarter\app\src\main\AndroidManifest.xml:17:5-22:16
 	android:exported
-		ADDED from C:\Users\Korisnik\Desktop\jelena\mobilne\AndroidRPGStarter\AndroidRPG_FirebaseStarter\app\src\main\AndroidManifest.xml:16:45-68
+		ADDED from C:\Users\Korisnik\Desktop\jelena\mobilne\AndroidRPGStarter\AndroidRPG_FirebaseStarter\app\src\main\AndroidManifest.xml:17:45-68
 	android:name
-		ADDED from C:\Users\Korisnik\Desktop\jelena\mobilne\AndroidRPGStarter\AndroidRPG_FirebaseStarter\app\src\main\AndroidManifest.xml:16:15-44
+		ADDED from C:\Users\Korisnik\Desktop\jelena\mobilne\AndroidRPGStarter\AndroidRPG_FirebaseStarter\app\src\main\AndroidManifest.xml:17:15-44
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from C:\Users\Korisnik\Desktop\jelena\mobilne\AndroidRPGStarter\AndroidRPG_FirebaseStarter\app\src\main\AndroidManifest.xml:17:7-20:23
+ADDED from C:\Users\Korisnik\Desktop\jelena\mobilne\AndroidRPGStarter\AndroidRPG_FirebaseStarter\app\src\main\AndroidManifest.xml:18:7-21:23
 action#android.intent.action.MAIN
-ADDED from C:\Users\Korisnik\Desktop\jelena\mobilne\AndroidRPGStarter\AndroidRPG_FirebaseStarter\app\src\main\AndroidManifest.xml:18:9-61
+ADDED from C:\Users\Korisnik\Desktop\jelena\mobilne\AndroidRPGStarter\AndroidRPG_FirebaseStarter\app\src\main\AndroidManifest.xml:19:9-61
 	android:name
-		ADDED from C:\Users\Korisnik\Desktop\jelena\mobilne\AndroidRPGStarter\AndroidRPG_FirebaseStarter\app\src\main\AndroidManifest.xml:18:17-58
+		ADDED from C:\Users\Korisnik\Desktop\jelena\mobilne\AndroidRPGStarter\AndroidRPG_FirebaseStarter\app\src\main\AndroidManifest.xml:19:17-58
 category#android.intent.category.LAUNCHER
-ADDED from C:\Users\Korisnik\Desktop\jelena\mobilne\AndroidRPGStarter\AndroidRPG_FirebaseStarter\app\src\main\AndroidManifest.xml:19:9-69
+ADDED from C:\Users\Korisnik\Desktop\jelena\mobilne\AndroidRPGStarter\AndroidRPG_FirebaseStarter\app\src\main\AndroidManifest.xml:20:9-69
 	android:name
-		ADDED from C:\Users\Korisnik\Desktop\jelena\mobilne\AndroidRPGStarter\AndroidRPG_FirebaseStarter\app\src\main\AndroidManifest.xml:19:19-66
+		ADDED from C:\Users\Korisnik\Desktop\jelena\mobilne\AndroidRPGStarter\AndroidRPG_FirebaseStarter\app\src\main\AndroidManifest.xml:20:19-66
 uses-sdk
 INJECTED from C:\Users\Korisnik\Desktop\jelena\mobilne\AndroidRPGStarter\AndroidRPG_FirebaseStarter\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from C:\Users\Korisnik\Desktop\jelena\mobilne\AndroidRPGStarter\AndroidRPG_FirebaseStarter\app\src\main\AndroidManifest.xml
