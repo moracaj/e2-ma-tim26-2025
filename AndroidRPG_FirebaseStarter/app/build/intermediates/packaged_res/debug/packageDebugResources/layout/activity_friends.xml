@@ -9,39 +9,64 @@
       android:orientation="vertical"
       android:padding="16dp">
 
+    <!-- Add friend by username -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add Friend by Username" />
+        android:text="Add Friend by Username"
+        android:textStyle="bold" />
 
-    <EditText
-        android:id="@+id/etFriend"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Username" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingTop="4dp">
 
+      <EditText
+          android:id="@+id/etFriend"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:hint="Username" />
+
+      <Button
+          android:id="@+id/btnAddFriend"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="Find"
+          android:layout_marginStart="8dp" />
+    </LinearLayout>
+
+    <!-- QR scan -->
     <Button
-        android:id="@+id/btnAddFriend"
+        android:id="@+id/btnScanQr"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Add Friend" />
+        android:text="Scan QR"
+        android:layout_marginTop="6dp" />
 
+    <!-- Friends lista -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Friends"
-        android:paddingTop="8dp" />
+        android:paddingTop="12dp"
+        android:textStyle="bold" />
 
     <ListView
         android:id="@+id/listFriends"
         android:layout_width="match_parent"
-        android:layout_height="200dp" />
+        android:layout_height="200dp"
+        android:dividerHeight="1dp" />
 
+    <!-- Alliance -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Alliance"
-        android:paddingTop="16dp" />
+        android:paddingTop="16dp"
+        android:textStyle="bold" />
 
     <EditText
         android:id="@+id/etAllianceName"
@@ -53,11 +78,29 @@
         android:id="@+id/btnCreateAlliance"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Create Alliance" />
+        android:text="Create Alliance"
+        android:layout_marginTop="6dp" />
+
+    <Button
+        android:id="@+id/btnInvites"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Invites"
+        android:layout_marginTop="6dp" />
 
     <TextView
         android:id="@+id/tvAllianceInfo"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:paddingTop="8dp" />
+
+    <Button
+        android:id="@+id/btnLeaveOrDisband"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Leave / Disband"
+        android:visibility="gone"
+        android:layout_marginTop="6dp" />
+
   </LinearLayout>
 </ScrollView>

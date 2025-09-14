@@ -3,11 +3,30 @@ package rs.ftn.rpgtracker;
 import android.content.Intent; import android.os.Bundle; import android.widget.Button; import android.widget.Toast;
 import androidx.annotation.Nullable; import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.auth.FirebaseAuth;
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.core.content.ContextCompat;
+
+
 public class MainActivity extends AppCompatActivity {
+  private final ActivityResultLauncher<String> notifPerm =
+          registerForActivityResult(new ActivityResultContracts.RequestPermission(), granted -> { /* opcionalno: Toast */ });
+
   Button btnProfile,btnShop,btnFriends,btnChat,btnLogout;
+
   @Override protected void onCreate(@Nullable Bundle savedInstanceState){
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
+    Notifications.createChannels(this);
+    if (Build.VERSION.SDK_INT >= 33 &&
+            ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+      notifPerm.launch(Manifest.permission.POST_NOTIFICATIONS);
+    }
+    //Notifications.createChannels(this);
     if(Prefs.getUid(this)==null || FirebaseAuth.getInstance().getCurrentUser()==null){
         startActivity(new Intent(this, LoginActivity.class));
         finish();
