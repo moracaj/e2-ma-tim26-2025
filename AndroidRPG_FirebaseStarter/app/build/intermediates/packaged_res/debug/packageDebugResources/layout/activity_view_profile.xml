@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical" android:padding="16dp"
+        android:layout_width="match_parent" android:layout_height="wrap_content">
+
+        <!-- Avatar + Username + Title -->
+        <ImageView
+            android:id="@+id/ivAvatar"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:src="@android:drawable/sym_def_app_icon"
+            android:layout_gravity="center_horizontal" />
+
+        <TextView
+            android:id="@+id/tvUsername"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:paddingTop="8dp"
+            android:layout_gravity="center_horizontal" />
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="italic"
+            android:paddingTop="2dp"
+            android:layout_gravity="center_horizontal" />
+
+        <!-- Stats -->
+        <TextView android:id="@+id/tvLevel" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+        <TextView android:id="@+id/tvXp"    android:layout_width="wrap_content" android:layout_height="wrap_content" />
+
+        <!-- QR kod (UID) -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="QR code"
+            android:textStyle="bold"
+            android:paddingTop="8dp" />
+        <ImageView
+            android:id="@+id/ivQr"
+            android:layout_width="160dp"
+            android:layout_height="160dp"
+            android:layout_marginTop="4dp"
+            android:layout_gravity="start" />
+
+        <!-- Bedževi -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Badges"
+            android:textStyle="bold"
+            android:paddingTop="12dp" />
+        <TextView
+            android:id="@+id/tvBadges"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="—"
+            android:paddingTop="2dp" />
+
+        <!-- Oprema -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Equipped gear"
+            android:textStyle="bold"
+            android:paddingTop="12dp" />
+        <TextView android:id="@+id/tvEquipWeapon"   android:layout_width="match_parent" android:layout_height="wrap_content" />
+        <TextView android:id="@+id/tvEquipArmor"    android:layout_width="match_parent" android:layout_height="wrap_content" />
+        <TextView android:id="@+id/tvEquipAccessory" android:layout_width="match_parent" android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="(Read-only profile)"
+            android:textStyle="italic"
+            android:paddingTop="8dp" />
+
+        <!-- Add Friend -->
+        <Button
+            android:id="@+id/btnAddFriend"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Add Friend"
+            android:layout_marginTop="12dp" />
+    </LinearLayout>
+</ScrollView>
