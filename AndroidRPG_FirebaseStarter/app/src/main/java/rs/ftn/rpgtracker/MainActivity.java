@@ -21,23 +21,14 @@ public class MainActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     Notifications.createChannels(this);
-    if (android.os.Build.VERSION.SDK_INT >= 33 &&
-            androidx.core.content.ContextCompat.checkSelfPermission(this,
-                    android.Manifest.permission.POST_NOTIFICATIONS)
-                    != android.content.pm.PackageManager.PERMISSION_GRANTED) {
-      registerForActivityResult(
-              new androidx.activity.result.contract.ActivityResultContracts.RequestPermission(),
-              granted -> { /* i ako odbije, listener je već startovan iz App.onCreate() */
-                if (granted) LiveNotifications.start(this);
-              }
-      ).launch(android.Manifest.permission.POST_NOTIFICATIONS);
-    } else {
-      LiveNotifications.start(this);
-    }
     if (Build.VERSION.SDK_INT >= 33 &&
             ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
                     != PackageManager.PERMISSION_GRANTED) {
-      notifPerm.launch(Manifest.permission.POST_NOTIFICATIONS);
+      registerForActivityResult(new ActivityResultContracts.RequestPermission(), granted -> {
+        LiveNotifications.start(getApplicationContext());
+      }).launch(Manifest.permission.POST_NOTIFICATIONS);
+    } else {
+      LiveNotifications.start(getApplicationContext());
     }
 
     if(Prefs.getUid(this)==null || FirebaseAuth.getInstance().getCurrentUser()==null){
@@ -55,6 +46,6 @@ public class MainActivity extends AppCompatActivity {
     btnFriends.setOnClickListener(v->startActivity(new Intent(this, FriendsActivity.class)));
     btnChat.setOnClickListener(v->startActivity(new Intent(this, ChatActivity.class)));
     btnLogout.setOnClickListener(v->{ Prefs.clear(this); FirebaseAuth.getInstance().signOut(); Toast.makeText(this,"Logged out",Toast.LENGTH_SHORT).show(); startActivity(new Intent(this, LoginActivity.class)); finish(); });
-    LiveNotifications.stop();
+    //LiveNotifications.stop();
   }
 }

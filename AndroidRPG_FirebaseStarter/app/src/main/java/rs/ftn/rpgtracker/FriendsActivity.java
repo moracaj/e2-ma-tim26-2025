@@ -14,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AlertDialog;
 import com.google.firebase.firestore.DocumentReference;
-
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.*;
 import com.journeyapps.barcodescanner.ScanOptions;
@@ -30,6 +29,10 @@ import com.google.firebase.firestore.DocumentReference;
 import java.util.*;
 
 public class FriendsActivity extends AppCompatActivity {
+    ListenerRegistration inboxReg;
+    private final java.util.Set<String> seenInboxIds = new java.util.HashSet<>();
+    private boolean inboxInitialized = false;
+
     TextView tvAllianceLeader;
     ListView listAllianceMembers;
 
@@ -141,6 +144,8 @@ public class FriendsActivity extends AppCompatActivity {
     loadMe();
     loadFriends();
     listenInvites();
+    listenLeaderInbox();
+
   }
 
   private void searchUsersAndOpenDialog(String query){
@@ -194,6 +199,8 @@ public class FriendsActivity extends AppCompatActivity {
     if (invitesReg != null) invitesReg.remove();
     if (msgsReg != null) msgsReg.remove();
     if (membersReg != null) membersReg.remove();
+    if (inboxReg != null) inboxReg.remove();
+
   }
 
   private void loadMe(){
@@ -248,6 +255,7 @@ public class FriendsActivity extends AppCompatActivity {
 
           // -- LISTA ČLANOVA --
           listenMembers();   // (re)attach snapshot listener
+          listenAllianceMessages();
       });
   }
 
@@ -293,15 +301,6 @@ public class FriendsActivity extends AppCompatActivity {
 
   // Dodavanje prijatelja po korisničkom imenu
   private void addFriendByUsername(){
-    //String u = etFriend.getText().toString().trim();
-    //if (u.isEmpty()) { Toast.makeText(this,"Enter username",Toast.LENGTH_SHORT).show(); return; }
-    //db.collection("users").whereEqualTo("username", u).limit(1).get().addOnSuccessListener(q -> {
-    //  if (q.isEmpty()){ Toast.makeText(this,"User not found",Toast.LENGTH_SHORT).show(); return; }
-    //  String otherUid = q.getDocuments().get(0).getId();
-    //  if (otherUid.equals(uid)){ Toast.makeText(this,"That's you.",Toast.LENGTH_SHORT).show(); return; }
-    //  String otherName = q.getDocuments().get(0).getString("username");
-   //   writeFriendship(uid, myUsername, otherUid, otherName);
-   // });
     searchUsersAndOpenDialog(etFriend.getText().toString());
   }
 
@@ -525,6 +524,8 @@ public class FriendsActivity extends AppCompatActivity {
                   b.commit().addOnSuccessListener(v -> {
                       myAllianceId = allianceId;
                       refreshAllianceInfo();
+                      listenAllianceMessages(); // reattach za novi myAllianceId
+
                       Toast.makeText(this,"Joined alliance",Toast.LENGTH_SHORT).show();
 
                       // === NOVO: obavesti kreatora saveza ko je prihvatio ===
@@ -549,6 +550,47 @@ public class FriendsActivity extends AppCompatActivity {
               .show();
     });
   }
+
+    private void listenLeaderInbox() {
+        if (inboxReg != null) { inboxReg.remove(); inboxReg = null; }
+        inboxInitialized = false;
+        seenInboxIds.clear();
+
+        inboxReg = db.collection("users").document(uid)
+                .collection("inbox")
+                .whereEqualTo("type","inviteAccepted")
+                .orderBy("ts", Query.Direction.DESCENDING)
+                .addSnapshotListener((qs, e) -> {
+                    if (e != null || qs == null) return;
+
+                    if (!inboxInitialized) {
+                        for (DocumentSnapshot d : qs.getDocuments()) seenInboxIds.add(d.getId());
+                        inboxInitialized = true;
+                        return; // ne diži notifikacije za staru istoriju
+                    }
+
+                    for (DocumentChange ch : qs.getDocumentChanges()) {
+                        if (ch.getType() != DocumentChange.Type.ADDED) continue;
+
+                        DocumentSnapshot d = ch.getDocument();
+                        if (!seenInboxIds.add(d.getId())) continue;
+
+                        String byUser = String.valueOf(d.getString("byUsername"));
+                        String aName  = String.valueOf(d.getString("allianceName"));
+                        String aId    = String.valueOf(d.getString("allianceId"));
+
+                        Intent tap = new Intent(this, FriendsActivity.class);
+                        Notifications.show(
+                                this, Notifications.CH_INVITES,
+                                Math.abs((aId + ":ACC").hashCode()),
+                                (byUser == null || byUser.isEmpty() ? "Invite accepted" : byUser + " joined"),
+                                (aName == null ? "" : "Alliance: " + aName),
+                                tap, false
+                        );
+                    }
+                });
+    }
+
 
     private void listenInvites(){
         invitesReg = db.collection("users").document(uid).collection("allianceInvites")
@@ -664,6 +706,8 @@ public class FriendsActivity extends AppCompatActivity {
             myAllianceId = newAid;
             iAmLeader = false;
             refreshAllianceInfo();
+            listenAllianceMessages(); // reattach za novi myAllianceId
+
             Toast.makeText(this, "Joined " + inv.getString("allianceName"), Toast.LENGTH_SHORT).show();
 
             // === NOVO: obavesti kreatora saveza ko je prihvatio ===
