@@ -558,37 +558,33 @@ public class FriendsActivity extends AppCompatActivity {
 
         inboxReg = db.collection("users").document(uid)
                 .collection("inbox")
-                .whereEqualTo("type","inviteAccepted")
                 .orderBy("ts", Query.Direction.DESCENDING)
+                .limit(5)
                 .addSnapshotListener((qs, e) -> {
                     if (e != null || qs == null) return;
 
-                    if (!inboxInitialized) {
-                        for (DocumentSnapshot d : qs.getDocuments()) seenInboxIds.add(d.getId());
-                        inboxInitialized = true;
-                        return; // ne diži notifikacije za staru istoriju
-                    }
+                    for (DocumentChange dc : qs.getDocumentChanges()) {
+                        if (dc.getType() != DocumentChange.Type.ADDED) continue;
+                        DocumentSnapshot d = dc.getDocument();
 
-                    for (DocumentChange ch : qs.getDocumentChanges()) {
-                        if (ch.getType() != DocumentChange.Type.ADDED) continue;
+                        // filtriraj ovde
+                        if (!"inviteAccepted".equals(d.getString("type"))) continue;
 
-                        DocumentSnapshot d = ch.getDocument();
-                        if (!seenInboxIds.add(d.getId())) continue;
-
-                        String byUser = String.valueOf(d.getString("byUsername"));
-                        String aName  = String.valueOf(d.getString("allianceName"));
-                        String aId    = String.valueOf(d.getString("allianceId"));
+                        String byUser = d.getString("byUsername");
+                        String aName  = d.getString("allianceName");
+                        String aId    = d.getString("allianceId");
 
                         Intent tap = new Intent(this, FriendsActivity.class);
                         Notifications.show(
                                 this, Notifications.CH_INVITES,
-                                Math.abs((aId + ":ACC").hashCode()),
+                                Math.abs((String.valueOf(aId) + ":ACC").hashCode()),
                                 (byUser == null || byUser.isEmpty() ? "Invite accepted" : byUser + " joined"),
                                 (aName == null ? "" : "Alliance: " + aName),
                                 tap, false
                         );
                     }
                 });
+
     }
 
 
