@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "rs.ftn.rpgtracker.app-mergeDebugResources-38:/values-xlarge-v4/values-xlarge-v4.xml",
+            "outputFile": "rs.ftn.rpgtracker.app-mergeDebugResources-39:/values-xlarge-v4/values-xlarge-v4.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\Korisnik\\.gradle\\caches\\9.0-milestone-1\\transforms\\e4426ec4d972927c33a9928e3d0231ea\\transformed\\appcompat-1.7.0\\res\\values-xlarge-v4\\values-xlarge-v4.xml",
+                    "source": "C:\\Users\\HP\\.gradle\\caches\\9.0-milestone-1\\transforms\\6b235bc1a5d7496560259fcb37efcf29\\transformed\\appcompat-1.7.0\\res\\values-xlarge-v4\\values-xlarge-v4.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7",
                         "startColumns": "4,4,4,4,4,4",

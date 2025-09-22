@@ -4,15 +4,18 @@ import android.content.Intent; import android.os.Bundle; import android.text.Tex
 import androidx.annotation.Nullable; import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.auth.FirebaseAuth; import com.google.firebase.auth.FirebaseUser;
 public class LoginActivity extends AppCompatActivity {
+  Button btnCat;
   EditText email,password; Button btnLogin,btnGoRegister; FirebaseAuth auth;
   @Override protected void onCreate(@Nullable Bundle savedInstanceState){
     super.onCreate(savedInstanceState); setContentView(R.layout.activity_login);
     auth=FirebaseAuth.getInstance();
     email=findViewById(R.id.email); password=findViewById(R.id.password);
     btnLogin=findViewById(R.id.btnLogin); btnGoRegister=findViewById(R.id.btnGoRegister);
+    btnCat = findViewById(R.id.btnCat);
     if(Prefs.getUid(this)!=null && auth.getCurrentUser()!=null){ startActivity(new Intent(this, MainActivity.class)); finish(); return; }
     btnLogin.setOnClickListener(v->doLogin());
     btnGoRegister.setOnClickListener(v->startActivity(new Intent(this, RegisterActivity.class)));
+    btnCat.setOnClickListener(v -> startActivity(new Intent(this, CategoryActivity.class)));
   }
   private void doLogin(){
     String e=email.getText().toString().trim(); String p=password.getText().toString();

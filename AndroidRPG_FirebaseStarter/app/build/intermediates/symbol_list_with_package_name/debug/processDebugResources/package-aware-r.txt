@@ -1114,6 +1114,7 @@ attr suffixText
 attr suffixTextAppearance
 attr suffixTextColor
 attr suggestionRowLayout
+attr supportsAlpha
 attr switchMinWidth
 attr switchPadding
 attr switchStyle
@@ -2223,6 +2224,10 @@ dimen abc_text_size_subhead_material
 dimen abc_text_size_subtitle_material_toolbar
 dimen abc_text_size_title_material
 dimen abc_text_size_title_material_toolbar
+dimen ambilwarna_hsvHeight
+dimen ambilwarna_hsvWidth
+dimen ambilwarna_hueWidth
+dimen ambilwarna_spacer
 dimen appcompat_dialog_background_inset
 dimen browser_actions_context_menu_max_width
 dimen browser_actions_context_menu_min_padding
@@ -3026,6 +3031,13 @@ drawable abc_textfield_search_activated_mtrl_alpha
 drawable abc_textfield_search_default_mtrl_alpha
 drawable abc_textfield_search_material
 drawable abc_vector_test
+drawable ambilwarna_alphacheckered
+drawable ambilwarna_alphacheckered_tiled
+drawable ambilwarna_arrow_down
+drawable ambilwarna_arrow_right
+drawable ambilwarna_cursor
+drawable ambilwarna_hue
+drawable ambilwarna_target
 drawable avatar_blue
 drawable avatar_gold
 drawable avatar_green
@@ -3243,6 +3255,19 @@ id aligned
 id all
 id allStates
 id always
+id ambilwarna_alphaCheckered
+id ambilwarna_alphaCursor
+id ambilwarna_cursor
+id ambilwarna_dialogView
+id ambilwarna_newColor
+id ambilwarna_oldColor
+id ambilwarna_overlay
+id ambilwarna_pref_widget_box
+id ambilwarna_state
+id ambilwarna_target
+id ambilwarna_viewContainer
+id ambilwarna_viewHue
+id ambilwarna_viewSatBri
 id animateToEnd
 id animateToStart
 id antiClockwise
@@ -3270,7 +3295,9 @@ id browser_actions_menu_item_icon
 id browser_actions_menu_item_text
 id browser_actions_menu_items
 id browser_actions_menu_view
+id btnAdd
 id btnAddFriend
+id btnCat
 id btnChangePassword
 id btnChat
 id btnCreateAlliance
@@ -3291,6 +3318,7 @@ id cache_measures
 id callMeasure
 id cancel_button
 id carryVelocity
+id categoryName
 id center
 id centerCrop
 id centerInside
@@ -3445,6 +3473,7 @@ id line3
 id linear
 id listAllianceMembers
 id listCatalog
+id listCategory
 id listFriends
 id listInventory
 id listMessages
@@ -3560,10 +3589,12 @@ id path
 id pathRelative
 id peekHeight
 id percent
+id pick_color_button
 id pin
 id position
 id postLayout
 id pressed
+id preview_selected_color
 id progressXP
 id progress_circular
 id progress_horizontal
@@ -3603,6 +3634,7 @@ id select_dialog_listview
 id selected
 id selectionRing
 id selection_type
+id set_color_button
 id sharedValueSet
 id sharedValueUnset
 id shortcut
@@ -3694,6 +3726,7 @@ id tvAlliance
 id tvAllianceInfo
 id tvAllianceLeader
 id tvBadges
+id tvCategoryName
 id tvCoins
 id tvEquipAccessory
 id tvEquipArmor
@@ -3716,6 +3749,7 @@ id up
 id useLogo
 id username
 id vertical_only
+id viewColor
 id view_offset_helper
 id view_transition
 id view_tree_lifecycle_owner
@@ -3862,14 +3896,18 @@ layout abc_search_dropdown_item_icons_2line
 layout abc_search_view
 layout abc_select_dialog_material
 layout abc_tooltip
+layout activity_category
 layout activity_chat
 layout activity_friends
 layout activity_login
 layout activity_main
+layout activity_new_category
 layout activity_profile
 layout activity_register
 layout activity_shop
 layout activity_view_profile
+layout ambilwarna_dialog
+layout ambilwarna_pref_widget
 layout browser_actions_context_menu_page
 layout browser_actions_context_menu_row
 layout custom_dialog
@@ -3892,6 +3930,7 @@ layout dialog_change_password
 layout ime_base_split_test_activity
 layout ime_secondary_split_test_activity
 layout item_avatar
+layout item_category
 layout item_message_left
 layout item_message_right
 layout m3_alert_dialog
@@ -5308,6 +5347,7 @@ styleable ActionMenuView
 styleable ActionMode background backgroundSplit closeItemLayout height subtitleTextStyle titleTextStyle
 styleable ActivityChooserView expandActivityOverflowButtonDrawable initialActivityCount
 styleable AlertDialog android_layout buttonIconDimen buttonPanelSideLayout listItemLayout listLayout multiChoiceItemLayout showTitle singleChoiceItemLayout
+styleable AmbilWarnaPreference supportsAlpha
 styleable AnimatedStateListDrawableCompat android_dither android_visible android_variablePadding android_constantSize android_enterFadeDuration android_exitFadeDuration
 styleable AnimatedStateListDrawableItem android_id android_drawable
 styleable AnimatedStateListDrawableTransition android_drawable android_toId android_fromId android_reversible
