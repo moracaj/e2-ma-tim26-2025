@@ -1,86 +1,114 @@
 [
     {
-        "merged": "C:\\Users\\HP\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-debug-41:\\drawable_avatar_purple.png.flat",
-        "source": "C:\\Users\\HP\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-main-43:\\drawable\\avatar_purple.png"
+        "merged": "rs.ftn.rpgtracker.app-debug-45:/drawable_avatar_purple.png.flat",
+        "source": "rs.ftn.rpgtracker.app-main-47:/drawable/avatar_purple.png"
     },
     {
-        "merged": "C:\\Users\\HP\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-debug-41:\\drawable_avatar_red.png.flat",
-        "source": "C:\\Users\\HP\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-main-43:\\drawable\\avatar_red.png"
+        "merged": "rs.ftn.rpgtracker.app-debug-45:/layout_activity_calendar.xml.flat",
+        "source": "rs.ftn.rpgtracker.app-main-47:/layout/activity_calendar.xml"
     },
     {
-        "merged": "C:\\Users\\HP\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-debug-41:\\layout_activity_register.xml.flat",
-        "source": "C:\\Users\\HP\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-main-43:\\layout\\activity_register.xml"
+        "merged": "rs.ftn.rpgtracker.app-debug-45:/layout_item_calendar_day.xml.flat",
+        "source": "rs.ftn.rpgtracker.app-main-47:/layout/item_calendar_day.xml"
     },
     {
-        "merged": "C:\\Users\\HP\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-debug-41:\\layout_activity_main.xml.flat",
-        "source": "C:\\Users\\HP\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-main-43:\\layout\\activity_main.xml"
+        "merged": "rs.ftn.rpgtracker.app-debug-45:/drawable_avatar_red.png.flat",
+        "source": "rs.ftn.rpgtracker.app-main-47:/drawable/avatar_red.png"
     },
     {
-        "merged": "C:\\Users\\HP\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-debug-41:\\drawable_ic_crown.xml.flat",
-        "source": "C:\\Users\\HP\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-main-43:\\drawable\\ic_crown.xml"
+        "merged": "rs.ftn.rpgtracker.app-debug-45:/layout_fragment_task.xml.flat",
+        "source": "rs.ftn.rpgtracker.app-main-47:/layout/fragment_task.xml"
     },
     {
-        "merged": "C:\\Users\\HP\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-debug-41:\\drawable_avatar_blue.png.flat",
-        "source": "C:\\Users\\HP\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-main-43:\\drawable\\avatar_blue.png"
+        "merged": "rs.ftn.rpgtracker.app-debug-45:/layout_activity_profile.xml.flat",
+        "source": "rs.ftn.rpgtracker.app-main-47:/layout/activity_profile.xml"
     },
     {
-        "merged": "C:\\Users\\HP\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-debug-41:\\drawable_avatar_gold.png.flat",
-        "source": "C:\\Users\\HP\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-main-43:\\drawable\\avatar_gold.png"
+        "merged": "rs.ftn.rpgtracker.app-debug-45:/layout_dialog_change_password.xml.flat",
+        "source": "rs.ftn.rpgtracker.app-main-47:/layout/dialog_change_password.xml"
     },
     {
-        "merged": "C:\\Users\\HP\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-debug-41:\\layout_activity_category.xml.flat",
-        "source": "C:\\Users\\HP\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-main-43:\\layout\\activity_category.xml"
+        "merged": "rs.ftn.rpgtracker.app-debug-45:/layout_item_task.xml.flat",
+        "source": "rs.ftn.rpgtracker.app-main-47:/layout/item_task.xml"
     },
     {
-        "merged": "C:\\Users\\HP\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-debug-41:\\layout_activity_profile.xml.flat",
-        "source": "C:\\Users\\HP\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-main-43:\\layout\\activity_profile.xml"
+        "merged": "rs.ftn.rpgtracker.app-debug-45:/layout_activity_category.xml.flat",
+        "source": "rs.ftn.rpgtracker.app-main-47:/layout/activity_category.xml"
     },
     {
-        "merged": "C:\\Users\\HP\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-debug-41:\\layout_item_message_left.xml.flat",
-        "source": "C:\\Users\\HP\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-main-43:\\layout\\item_message_left.xml"
+        "merged": "rs.ftn.rpgtracker.app-debug-45:/layout_activity_chat.xml.flat",
+        "source": "rs.ftn.rpgtracker.app-main-47:/layout/activity_chat.xml"
     },
     {
-        "merged": "C:\\Users\\HP\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-debug-41:\\layout_activity_friends.xml.flat",
-        "source": "C:\\Users\\HP\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-main-43:\\layout\\activity_friends.xml"
+        "merged": "rs.ftn.rpgtracker.app-debug-45:/layout_activity_new_category.xml.flat",
+        "source": "rs.ftn.rpgtracker.app-main-47:/layout/activity_new_category.xml"
     },
     {
-        "merged": "C:\\Users\\HP\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-debug-41:\\layout_activity_new_category.xml.flat",
-        "source": "C:\\Users\\HP\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-main-43:\\layout\\activity_new_category.xml"
+        "merged": "rs.ftn.rpgtracker.app-debug-45:/drawable_bg_calendar_day.xml.flat",
+        "source": "rs.ftn.rpgtracker.app-main-47:/drawable/bg_calendar_day.xml"
     },
     {
-        "merged": "C:\\Users\\HP\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-debug-41:\\layout_item_message_right.xml.flat",
-        "source": "C:\\Users\\HP\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-main-43:\\layout\\item_message_right.xml"
+        "merged": "rs.ftn.rpgtracker.app-debug-45:/layout_activity_login.xml.flat",
+        "source": "rs.ftn.rpgtracker.app-main-47:/layout/activity_login.xml"
     },
     {
-        "merged": "C:\\Users\\HP\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-debug-41:\\layout_activity_view_profile.xml.flat",
-        "source": "C:\\Users\\HP\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-main-43:\\layout\\activity_view_profile.xml"
+        "merged": "rs.ftn.rpgtracker.app-debug-45:/layout_activity_friends.xml.flat",
+        "source": "rs.ftn.rpgtracker.app-main-47:/layout/activity_friends.xml"
     },
     {
-        "merged": "C:\\Users\\HP\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-debug-41:\\layout_item_avatar.xml.flat",
-        "source": "C:\\Users\\HP\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-main-43:\\layout\\item_avatar.xml"
+        "merged": "rs.ftn.rpgtracker.app-debug-45:/layout_activity_task.xml.flat",
+        "source": "rs.ftn.rpgtracker.app-main-47:/layout/activity_task.xml"
     },
     {
-        "merged": "C:\\Users\\HP\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-debug-41:\\layout_dialog_change_password.xml.flat",
-        "source": "C:\\Users\\HP\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-main-43:\\layout\\dialog_change_password.xml"
+        "merged": "rs.ftn.rpgtracker.app-debug-45:/drawable_avatar_green.png.flat",
+        "source": "rs.ftn.rpgtracker.app-main-47:/drawable/avatar_green.png"
     },
     {
-        "merged": "C:\\Users\\HP\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-debug-41:\\drawable_avatar_green.png.flat",
-        "source": "C:\\Users\\HP\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-main-43:\\drawable\\avatar_green.png"
+        "merged": "rs.ftn.rpgtracker.app-debug-45:/drawable_ic_crown.xml.flat",
+        "source": "rs.ftn.rpgtracker.app-main-47:/drawable/ic_crown.xml"
     },
     {
-        "merged": "rs.ftn.rpgtracker.app-debug-41:/layout_item_category.xml.flat",
-        "source": "rs.ftn.rpgtracker.app-main-43:/layout/item_category.xml"
+        "merged": "rs.ftn.rpgtracker.app-debug-45:/drawable_avatar_blue.png.flat",
+        "source": "rs.ftn.rpgtracker.app-main-47:/drawable/avatar_blue.png"
     },
     {
-        "merged": "C:\\Users\\HP\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-debug-41:\\layout_activity_chat.xml.flat",
-        "source": "C:\\Users\\HP\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-main-43:\\layout\\activity_chat.xml"
+        "merged": "rs.ftn.rpgtracker.app-debug-45:/layout_item_message_left.xml.flat",
+        "source": "rs.ftn.rpgtracker.app-main-47:/layout/item_message_left.xml"
     },
     {
-        "merged": "C:\\Users\\HP\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-debug-41:\\layout_activity_shop.xml.flat",
-        "source": "C:\\Users\\HP\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-main-43:\\layout\\activity_shop.xml"
+        "merged": "rs.ftn.rpgtracker.app-debug-45:/drawable_avatar_gold.png.flat",
+        "source": "rs.ftn.rpgtracker.app-main-47:/drawable/avatar_gold.png"
     },
     {
-        "merged": "C:\\Users\\HP\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-debug-41:\\layout_activity_login.xml.flat",
-        "source": "C:\\Users\\HP\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-main-43:\\layout\\activity_login.xml"
+        "merged": "rs.ftn.rpgtracker.app-debug-45:/layout_activity_new_task.xml.flat",
+        "source": "rs.ftn.rpgtracker.app-main-47:/layout/activity_new_task.xml"
+    },
+    {
+        "merged": "rs.ftn.rpgtracker.app-debug-45:/layout_item_avatar.xml.flat",
+        "source": "rs.ftn.rpgtracker.app-main-47:/layout/item_avatar.xml"
+    },
+    {
+        "merged": "rs.ftn.rpgtracker.app-debug-45:/layout_activity_register.xml.flat",
+        "source": "rs.ftn.rpgtracker.app-main-47:/layout/activity_register.xml"
+    },
+    {
+        "merged": "rs.ftn.rpgtracker.app-debug-45:/layout_item_category.xml.flat",
+        "source": "rs.ftn.rpgtracker.app-main-47:/layout/item_category.xml"
+    },
+    {
+        "merged": "rs.ftn.rpgtracker.app-debug-45:/layout_activity_shop.xml.flat",
+        "source": "rs.ftn.rpgtracker.app-main-47:/layout/activity_shop.xml"
+    },
+    {
+        "merged": "rs.ftn.rpgtracker.app-debug-45:/layout_activity_view_profile.xml.flat",
+        "source": "rs.ftn.rpgtracker.app-main-47:/layout/activity_view_profile.xml"
+    },
+    {
+        "merged": "rs.ftn.rpgtracker.app-debug-45:/layout_activity_main.xml.flat",
+        "source": "rs.ftn.rpgtracker.app-main-47:/layout/activity_main.xml"
+    },
+    {
+        "merged": "rs.ftn.rpgtracker.app-debug-45:/layout_item_message_right.xml.flat",
+        "source": "rs.ftn.rpgtracker.app-main-47:/layout/item_message_right.xml"
     }
 ]

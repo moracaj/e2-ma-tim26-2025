@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "rs.ftn.rpgtracker.app-mergeDebugResources-39:/values-ldrtl-v17/values-ldrtl-v17.xml",
+            "outputFile": "rs.ftn.rpgtracker.app-mergeDebugResources-43:/values-ldrtl-v17/values-ldrtl-v17.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\HP\\.gradle\\caches\\9.0-milestone-1\\transforms\\fa1cfffeb32a0625860f621cd89b29aa\\transformed\\material-1.12.0\\res\\values-ldrtl-v17\\values-ldrtl-v17.xml",
+                    "source": "C:\\Users\\HP\\.gradle\\caches\\9.0-milestone-1\\transforms\\8daea06ccaeec0e64c13ce2cd75a6678\\transformed\\material-1.13.0\\res\\values-ldrtl-v17\\values-ldrtl-v17.xml",
                     "from": {
                         "startLines": "2,3",
                         "startColumns": "4,4",

@@ -9,11 +9,13 @@
 bin/
 gen/
 
-# Gradle files
+# Gradle
 .gradle/
+gradle/
 build/
-*/build/
 
+# App/module build folders
+*/build/
 
 # Log Files
 *.log

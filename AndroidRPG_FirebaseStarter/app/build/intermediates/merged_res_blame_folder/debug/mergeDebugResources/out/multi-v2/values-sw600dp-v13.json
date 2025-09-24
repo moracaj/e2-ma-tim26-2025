@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "rs.ftn.rpgtracker.app-mergeDebugResources-39:/values-sw600dp-v13/values-sw600dp-v13.xml",
+            "outputFile": "rs.ftn.rpgtracker.app-mergeDebugResources-43:/values-sw600dp-v13/values-sw600dp-v13.xml",
             "map": [
                 {
                     "source": "C:\\Users\\HP\\.gradle\\caches\\9.0-milestone-1\\transforms\\6b235bc1a5d7496560259fcb37efcf29\\transformed\\appcompat-1.7.0\\res\\values-sw600dp-v13\\values-sw600dp-v13.xml",
@@ -14,7 +14,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\HP\\.gradle\\caches\\9.0-milestone-1\\transforms\\fa1cfffeb32a0625860f621cd89b29aa\\transformed\\material-1.12.0\\res\\values-sw600dp-v13\\values-sw600dp-v13.xml",
+                    "source": "C:\\Users\\HP\\.gradle\\caches\\9.0-milestone-1\\transforms\\8daea06ccaeec0e64c13ce2cd75a6678\\transformed\\material-1.13.0\\res\\values-sw600dp-v13\\values-sw600dp-v13.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,10,11,12,13,14",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4",

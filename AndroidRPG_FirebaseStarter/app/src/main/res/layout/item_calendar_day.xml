@@ -1,0 +1,24 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="120dp"
+    android:orientation="vertical"
+    android:padding="4dp"
+    android:background="@drawable/bg_calendar_day">
+
+    <!-- Datum -->
+    <TextView
+        android:id="@+id/tvDayNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <!-- Lista zadataka (dinamički dodajemo TextView-ove sa bojom kategorije) -->
+    <LinearLayout
+        android:id="@+id/layoutTasks"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingTop="4dp" />
+</LinearLayout>

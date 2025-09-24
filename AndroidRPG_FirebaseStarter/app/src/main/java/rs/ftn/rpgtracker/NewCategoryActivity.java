@@ -86,30 +86,49 @@ public class NewCategoryActivity extends AppCompatActivity {
         colorPickerDialogue.show();
     }
 
-    private void Create(){
-        String e=name.getText().toString().trim();
-        if(TextUtils.isEmpty(e)){
-            Toast.makeText(this,"All fields are required",Toast.LENGTH_SHORT).show();
+    private void Create() {
+        String e = name.getText().toString().trim();
+        if (TextUtils.isEmpty(e)) {
+            Toast.makeText(this, "All fields are required", Toast.LENGTH_SHORT).show();
             return;
         }
-        Map<String, Object> category = new HashMap<>();
-        category.put("name", e);
-        category.put("color", mDefaultColor);
 
+        // prvo proveri da li postoji kategorija sa istom bojom
         db.collection("categories")
-                .add(category)
-                .addOnSuccessListener(documentReference -> {
-                    Toast.makeText(this, "Category created successfully!", Toast.LENGTH_SHORT).show();
-                    name.setText("");
-                    mColorPreview.setBackgroundColor(0);
-                    mDefaultColor = 0;
-                })
-                .addOnFailureListener(e1 -> {
-                    Toast.makeText(this, "Error: " + e1.getMessage(), Toast.LENGTH_SHORT).show();
-                });
-        Intent intent = new Intent(this, CategoryActivity.class);
-        startActivity(intent);
+                .whereEqualTo("color", mDefaultColor)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        if (!task.getResult().isEmpty()) {
+                            // postoji već ista boja
+                            Toast.makeText(this, "Color already used in another category!", Toast.LENGTH_SHORT).show();
+                        } else {
+                            // boja je slobodna, možeš dodati novu kategoriju
+                            Map<String, Object> category = new HashMap<>();
+                            category.put("name", e);
+                            category.put("color", mDefaultColor);
 
+                            db.collection("categories")
+                                    .add(category)
+                                    .addOnSuccessListener(documentReference -> {
+                                        Toast.makeText(this, "Category created successfully!", Toast.LENGTH_SHORT).show();
+                                        name.setText("");
+                                        mColorPreview.setBackgroundColor(0);
+                                        mDefaultColor = 0;
+
+                                        // vrati korisnika na listu kategorija
+                                        Intent intent = new Intent(this, CategoryActivity.class);
+                                        startActivity(intent);
+                                    })
+                                    .addOnFailureListener(e1 -> {
+                                        Toast.makeText(this, "Error: " + e1.getMessage(), Toast.LENGTH_SHORT).show();
+                                    });
+                        }
+                    } else {
+                        Toast.makeText(this, "Error checking color uniqueness", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
+
 
 }

@@ -1,13 +1,24 @@
 
 package rs.ftn.rpgtracker;
-import android.os.Bundle; import android.text.TextUtils; import android.widget.*;
-import androidx.annotation.Nullable; import androidx.appcompat.app.AppCompatActivity;
-import com.google.firebase.auth.FirebaseAuth; import com.google.firebase.firestore.FirebaseFirestore;
-import java.util.HashMap; import java.util.Map;
+
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 public class RegisterActivity extends AppCompatActivity {
   RecyclerView rvAvatars;
   String selectedAvatarKey = "avatar_blue"; // default
@@ -53,8 +64,15 @@ public class RegisterActivity extends AppCompatActivity {
         data.put("title","Unranked");
         data.put("allianceId",null);
         db.collection("users").document(uid).set(data).addOnSuccessListener(aVoid->{ Toast.makeText(this,"Account created. Check your email to verify.",Toast.LENGTH_LONG).show(); auth.signOut(); finish(); })
-           .addOnFailureListener(e2->Toast.makeText(this,e2.getMessage(),Toast.LENGTH_LONG).show());
+           .addOnFailureListener(e2-> {
+              e2.printStackTrace();
+                     Toast.makeText(this, e2.getMessage(), Toast.LENGTH_LONG).show();
+                   }
+           );
       }
-    }).addOnFailureListener(e1->Toast.makeText(this,e1.getMessage(),Toast.LENGTH_LONG).show());
+    }).addOnFailureListener(e1-> {
+              e1.printStackTrace();
+              Toast.makeText(this,e1.getMessage(),Toast.LENGTH_LONG).show();
+            });
   }
 }

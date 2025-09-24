@@ -1,1 +1,17 @@
-<resources><string name="app_name">RPGTracker</string></resources>
+<resources>
+
+    <string name="app_name">RPGTracker</string>
+
+
+    <string-array name="repeat_units">
+        <item>Day</item>
+        <item>Week</item>
+    </string-array>
+    <string-array name="task_status">
+        <item>ACTIVE</item>
+        <item>COMPLETED</item>
+        <item>NOT_COMPLETED</item>
+        <item>PAUSED</item>
+        <item>CANCELED</item>
+    </string-array>
+</resources>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <!-- Naslov meseca -->
+    <TextView
+        android:id="@+id/tvMonthYear"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Septembar 2025"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:padding="8dp" />
+
+    <!-- Dani u nedelji (header) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="7">
+
+        <TextView style="@style/CalendarDayHeader" android:text="Mon"/>
+        <TextView style="@style/CalendarDayHeader" android:text="Tue"/>
+        <TextView style="@style/CalendarDayHeader" android:text="Wed"/>
+        <TextView style="@style/CalendarDayHeader" android:text="Thu"/>
+        <TextView style="@style/CalendarDayHeader" android:text="Fri"/>
+        <TextView style="@style/CalendarDayHeader" android:text="Sat"/>
+        <TextView style="@style/CalendarDayHeader" android:text="Sun"/>
+    </LinearLayout>
+
+    <!-- RecyclerView kalendar (7 kolona) -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/calendarRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        app:spanCount="7"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"/>
+</LinearLayout>

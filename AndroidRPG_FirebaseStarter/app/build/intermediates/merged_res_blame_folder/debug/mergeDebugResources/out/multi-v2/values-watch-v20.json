@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "rs.ftn.rpgtracker.app-mergeDebugResources-39:/values-watch-v20/values-watch-v20.xml",
+            "outputFile": "rs.ftn.rpgtracker.app-mergeDebugResources-43:/values-watch-v20/values-watch-v20.xml",
             "map": [
                 {
                     "source": "C:\\Users\\HP\\.gradle\\caches\\9.0-milestone-1\\transforms\\b85a8016147b6aa3f85393ea30519fcf\\transformed\\jetified-play-services-auth-20.7.0\\res\\values-watch-v20\\values.xml",
