@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -14,11 +13,12 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import rs.ftn.rpgtracker.NewTaskActivity;
 import rs.ftn.rpgtracker.R;
@@ -28,10 +28,12 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     private final List<Task> taskList;
     private final Context context;
+    private final String[] statusArray; // niz iz strings.xml
 
     public TaskAdapter(List<Task> taskList, Context context) {
         this.taskList = taskList;
         this.context = context;
+        this.statusArray = context.getResources().getStringArray(R.array.task_status);
     }
 
     @NonNull
@@ -47,92 +49,34 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
         holder.tvTaskName.setText(task.getName());
         holder.tvTaskDescription.setText(task.getDescription());
-        holder.tvTaskCategory.setText("Category: " + (task.getCategory() != null ? task.getCategory().getName() : ""));
-        holder.tvTaskTime.setText("Execution time: " + task.getExecutionTime());
+        holder.tvTaskCategory.setText("Kategorija: " + (task.getCategory() != null ? task.getCategory().getName() : ""));
+        holder.tvTaskTime.setText("Vreme: " + task.getExecutionTime());
 
-        // 🔹 Status spinner
-        String[] statuses = holder.itemView.getContext().getResources().getStringArray(R.array.task_status);
-        int selectedIndex = 0;
-        for (int i = 0; i < statuses.length; i++) {
-            if (statuses[i].equals(task.getStatus().toString())) {
-                selectedIndex = i;
-                break;
-            }
-        }
-        holder.spinnerStatus.setSelection(selectedIndex);
+        // 🔹 koristimo status iz string-array umesto enum.toString()
+        String statusText = statusArray[task.getStatus().ordinal()];
+        holder.tvTaskStatus.setText("Status: " + statusText);
 
-        // 🔹 Vidljivost Delete dugmeta
-        if (task.getStatus() == Task.Status.COMPLETED ||
-                task.getStatus() == Task.Status.NOT_COMPLETED) {
-            holder.btnDeleteTask.setVisibility(View.GONE);
-        } else {
-            holder.btnDeleteTask.setVisibility(View.VISIBLE);
-        }
+        // 👉 Klik na zadatak → dijalog sa opcijama
+        holder.itemView.setOnClickListener(v -> showTaskDialog(task, holder.getAdapterPosition()));
 
-        // 🔹 Listener za status
-        holder.spinnerStatus.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                int currentPos = holder.getAdapterPosition();
-                if (currentPos == RecyclerView.NO_POSITION) return;
-
-                Task currentTask = taskList.get(currentPos);
-                String selected = parent.getItemAtPosition(pos).toString();
-
-                if (!selected.equals(currentTask.getStatus().toString())) {
-                    FirebaseFirestore db = FirebaseFirestore.getInstance();
-                    db.collection("tasks").document(currentTask.getId())
-                            .update("status", selected)
-                            .addOnSuccessListener(aVoid -> {
-                                currentTask.setStatus(Task.Status.valueOf(selected));
-                                Toast.makeText(context, "Status updated to " + selected, Toast.LENGTH_SHORT).show();
-
-                                // ✅ Ako je task kompletiran, proveri kvotu i dodaj XP
-                                if (currentTask.getStatus() == Task.Status.COMPLETED) {
-                                    String userId = "trenutniUserId"; // TODO: ovde ubaci pravi ID korisnika
-                                    completeTask(currentTask, userId);
-                                }
-
-                                notifyItemChanged(currentPos);
-                            })
-                            .addOnFailureListener(e ->
-                                    Toast.makeText(context, "Error updating status", Toast.LENGTH_SHORT).show());
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
-
-
-        // 🔹 Edit
+        // 👉 Edit
         holder.btnEditTask.setOnClickListener(v -> {
-            int currentPos = holder.getAdapterPosition();
-            if (currentPos == RecyclerView.NO_POSITION) return;
-
-            Task currentTask = taskList.get(currentPos);
             Intent intent = new Intent(context, NewTaskActivity.class);
-            intent.putExtra("taskId", currentTask.getId());
+            intent.putExtra("taskId", task.getId());
             context.startActivity(intent);
         });
 
-        // 🔹 Delete
+        // 👉 Delete
         holder.btnDeleteTask.setOnClickListener(v -> {
-            int currentPos = holder.getAdapterPosition();
-            if (currentPos == RecyclerView.NO_POSITION) return;
-
-            Task currentTask = taskList.get(currentPos);
-
             new android.app.AlertDialog.Builder(context)
                     .setTitle("Brisanje zadatka")
                     .setMessage("Da li ste sigurni da želite da obrišete ovaj zadatak?")
                     .setPositiveButton("Da", (dialog, which) -> {
-                        FirebaseFirestore db = FirebaseFirestore.getInstance();
-                        db.collection("tasks").document(currentTask.getId())
+                        FirebaseFirestore.getInstance().collection("tasks").document(task.getId())
                                 .delete()
                                 .addOnSuccessListener(aVoid -> {
-                                    taskList.remove(currentPos);
-                                    notifyItemRemoved(currentPos);
+                                    taskList.remove(holder.getAdapterPosition());
+                                    notifyItemRemoved(holder.getAdapterPosition());
                                     Toast.makeText(context, "Zadatak obrisan", Toast.LENGTH_SHORT).show();
                                 })
                                 .addOnFailureListener(e ->
@@ -141,8 +85,107 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                     .setNegativeButton("Ne", (dialog, which) -> dialog.dismiss())
                     .show();
         });
+
+        // 🔹 Boje za status
+        switch (task.getStatus()) {
+            case COMPLETED:
+                holder.tvTaskStatus.setTextColor(context.getResources().getColor(android.R.color.holo_green_dark));
+                break;
+            case CANCELED:
+                holder.tvTaskStatus.setTextColor(context.getResources().getColor(android.R.color.holo_red_dark));
+                break;
+            case PAUSED:
+                holder.tvTaskStatus.setTextColor(context.getResources().getColor(android.R.color.holo_orange_dark));
+                break;
+            case NOT_COMPLETED:
+                holder.tvTaskStatus.setTextColor(context.getResources().getColor(android.R.color.darker_gray));
+                break;
+            default: // ACTIVE
+                holder.tvTaskStatus.setTextColor(context.getResources().getColor(android.R.color.holo_blue_dark));
+                break;
+        }
     }
 
+    private void showTaskDialog(Task task, int position) {
+        String statusText = statusArray[task.getStatus().ordinal()];
+
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(context)
+                .setTitle(task.getName())
+                .setMessage("Opis: " + (task.getDescription() != null ? task.getDescription() : "Nema opisa") +
+                        "\nVreme: " + task.getExecutionTime() +
+                        "\nStatus: " + statusText)
+                .setCancelable(true);
+
+        if (task.getStatus() == Task.Status.ACTIVE) {
+            builder.setPositiveButton("Urađeno", (dialog, which) -> updateStatus(task, Task.Status.COMPLETED, position));
+            builder.setNegativeButton("Otkazano", (dialog, which) -> updateStatus(task, Task.Status.CANCELED, position));
+            if (task.isRecurring()) {
+                builder.setNeutralButton("Pauziraj", (dialog, which) -> updateStatus(task, Task.Status.PAUSED, position));
+            }
+        } else if (task.getStatus() == Task.Status.PAUSED) {
+            builder.setPositiveButton("Aktiviraj ponovo", (dialog, which) -> updateStatus(task, Task.Status.ACTIVE, position));
+        }
+
+        builder.show();
+    }
+
+    private void updateStatus(Task task, Task.Status newStatus, int position) {
+        Date today = new Date();
+
+        if (!task.canBeUpdated(today)) {
+            Toast.makeText(context, "Zadatak se više ne može menjati.", Toast.LENGTH_SHORT).show();
+            notifyItemChanged(position);
+            return;
+        }
+
+        if (task.getStatus() == Task.Status.ACTIVE) {
+            if (newStatus == Task.Status.COMPLETED ||
+                    newStatus == Task.Status.CANCELED ||
+                    newStatus == Task.Status.PAUSED) {
+                task.setStatus(newStatus);
+            } else {
+                Toast.makeText(context, "Nedozvoljena akcija!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        } else if (task.getStatus() == Task.Status.PAUSED) {
+            if (newStatus == Task.Status.ACTIVE) {
+                task.setStatus(Task.Status.ACTIVE);
+            } else {
+                Toast.makeText(context, "Možeš samo ponovo aktivirati ovaj zadatak.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        } else {
+            Toast.makeText(context, "Ovaj zadatak se ne može menjati.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        int xpReward = task.calculateXpReward();
+        if (xpReward > 0) {
+            addXpToUser(xpReward);
+        }
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("tasks").document(task.getId())
+                .update("status", task.getStatus().toString())
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(context, "Status updated: " + statusArray[task.getStatus().ordinal()], Toast.LENGTH_SHORT).show();
+                    notifyItemChanged(position);
+                })
+                .addOnFailureListener(e ->
+                        Toast.makeText(context, "Greška pri ažuriranju statusa", Toast.LENGTH_SHORT).show());
+    }
+
+    private void addXpToUser(int xp) {
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("users").document(uid)
+                .update("xp", FieldValue.increment(xp))
+                .addOnSuccessListener(aVoid ->
+                        Toast.makeText(context, "+ " + xp + " XP!", Toast.LENGTH_SHORT).show())
+                .addOnFailureListener(e ->
+                        Toast.makeText(context, "Greška pri dodavanju XP", Toast.LENGTH_SHORT).show());
+    }
 
     @Override
     public int getItemCount() {
@@ -150,8 +193,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     }
 
     public static class TaskViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTaskName, tvTaskDescription, tvTaskCategory, tvTaskTime;
-        Spinner spinnerStatus;
+        TextView tvTaskName, tvTaskDescription, tvTaskCategory, tvTaskTime, tvTaskStatus;
+
         Button btnEditTask, btnDeleteTask;
 
         public TaskViewHolder(@NonNull View itemView) {
@@ -160,48 +203,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             tvTaskDescription = itemView.findViewById(R.id.tvTaskDescription);
             tvTaskCategory = itemView.findViewById(R.id.tvTaskCategory);
             tvTaskTime = itemView.findViewById(R.id.tvTaskTime);
-            spinnerStatus = itemView.findViewById(R.id.spinnerStatus);
+            tvTaskStatus = itemView.findViewById(R.id.tvTaskStatus);
             btnEditTask = itemView.findViewById(R.id.btnEditTask);
             btnDeleteTask = itemView.findViewById(R.id.btnDeleteTask);
         }
     }
-    private void completeTask(Task task, String userId) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        Date startRange = task.getQuotaStartDate(); // koristi helper iz Task modela
-        if (startRange == null) {
-            startRange = new Date(0); // ako je UNLIMITED
-        }
-
-        db.collection("taskExecutions")
-                .whereEqualTo("taskId", task.getId())
-                .whereEqualTo("userId", userId)
-                .whereGreaterThanOrEqualTo("executionDate", startRange)
-                .get()
-                .addOnSuccessListener(querySnapshot -> {
-                    int count = querySnapshot.size();
-                    if (count < task.getMaxQuota()) {
-                        int xp = task.getTotalXP();
-
-                        // Dodaj XP korisniku
-                        db.collection("users").document(userId)
-                                .update("xp", com.google.firebase.firestore.FieldValue.increment(xp));
-
-                        // Snimi izvršenje
-                        Map<String, Object> execution = new java.util.HashMap<>();
-                        execution.put("taskId", task.getId());
-                        execution.put("userId", userId);
-                        execution.put("executionDate", new Date());
-                        db.collection("taskExecutions").add(execution);
-
-                        Toast.makeText(context, "Task completed! +" + xp + " XP", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(context, "Quota reached for this task", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addOnFailureListener(e ->
-                        Toast.makeText(context, "Error checking quota: " + e.getMessage(), Toast.LENGTH_SHORT).show()
-                );
-    }
-
 }

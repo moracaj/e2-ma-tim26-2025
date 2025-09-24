@@ -13,6 +13,8 @@ public class Task {
     private Date startDate;
     private Date endDate;
     private int repeatInterval;
+
+    private String userId;
     public enum RepeatUnit{
         DAN,
         NEDELJA
@@ -95,7 +97,7 @@ public class Task {
     public Task(String name, String description, Category category,
                 boolean isRecurring, Date startDate, Date endDate,
                 int repeatInterval, RepeatUnit repeatUnit, String executionTime,
-                Difficulty difficulty, Importance importance) {
+                Difficulty difficulty, Importance importance, String userId) {
 
         this.id = UUID.randomUUID().toString();
         this.name = name;
@@ -112,6 +114,7 @@ public class Task {
         this.totalXP = difficulty.getXpValue() + importance.getXpValue();
         this.status = Status.ACTIVE;
         this.createdAt = new Date();
+        this.userId = userId;
     }
 
     public String getId() {
@@ -219,6 +222,14 @@ public class Task {
         updateTotalXP();
     }
 
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
     private void updateTotalXP(){
         if(this.difficulty != null && this.importance != null){
             this.totalXP = this.difficulty.getXpValue() + this.importance.getXpValue();
@@ -296,6 +307,26 @@ public class Task {
                 return null; // UNLIMITED
         }
     }
+    public boolean canBeUpdated(Date currentDate) {
+        if (status == Status.CANCELED || status == Status.NOT_COMPLETED) return false;
 
+        // ako je prošlo više od 3 dana od startDate → automatski NOT_COMPLETED
+        if (startDate != null) {
+            long diffDays = (currentDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
+            if (diffDays > 3 && status == Status.ACTIVE) {
+                this.status = Status.NOT_COMPLETED;
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public int calculateXpReward() {
+        if (status == Status.COMPLETED) {
+            return totalXP;
+        }
+        // pauzirani i otkazani → 0
+        return 0;
+    }
 
 }

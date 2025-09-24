@@ -4,18 +4,34 @@ import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.*;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.Spinner;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.util.Pair;
+
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.DateValidatorPointForward;
 import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
 import rs.ftn.rpgtracker.adapter.CategoryAdapter;
 import rs.ftn.rpgtracker.model.Category;
 import rs.ftn.rpgtracker.model.Task;
@@ -141,23 +157,39 @@ public class NewTaskActivity extends AppCompatActivity {
     }
 
     private void loadCategoriesFromDb() {
-        db.collection("categories").get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                categories.clear();
-                for (QueryDocumentSnapshot doc : task.getResult()) {
-                    String id = doc.getId();
-                    String name = doc.getString("name");
-                    Long colorLong = doc.getLong("color");
-                    int color = (colorLong != null) ? colorLong.intValue() : 0;
-                    categories.add(new Category(id, name, color));
-                }
-                CategoryAdapter adapter = new CategoryAdapter(this, categories);
-                spinnerCategory.setAdapter(adapter);
-            } else {
-                Toast.makeText(this, "Greška pri učitavanju kategorija", Toast.LENGTH_SHORT).show();
-            }
-        });
+        String uid = FirebaseAuth.getInstance().getCurrentUser() != null
+                ? FirebaseAuth.getInstance().getCurrentUser().getUid()
+                : null;
+
+        if (uid == null) {
+            Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        db.collection("categories")
+                .whereEqualTo("userId", uid)   // 🔹 samo kategorije trenutnog korisnika
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        categories.clear();
+                        for (QueryDocumentSnapshot doc : task.getResult()) {
+                            String id = doc.getId();
+                            String name = doc.getString("name");
+                            Long colorLong = doc.getLong("color");
+                            int color = (colorLong != null) ? colorLong.intValue() : 0;
+
+                            // 🔹 uzimamo userId iz dokumenta (sigurnosti radi)
+                            String ownerId = doc.getString("userId");
+                            categories.add(new Category(id, name, color, ownerId));
+                        }
+                        CategoryAdapter adapter = new CategoryAdapter(this, categories);
+                        spinnerCategory.setAdapter(adapter);
+                    } else {
+                        Toast.makeText(this, "Greška pri učitavanju kategorija", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
+
 
     private void loadTaskDataForEdit() {
         DocumentReference docRef = db.collection("tasks").document(taskId);
@@ -221,13 +253,17 @@ public class NewTaskActivity extends AppCompatActivity {
             return;
         }
 
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+
         if (taskId == null) {
+
             // NOVI
             Task task = new Task(
                     name, desc, selectedCategory,
                     isRecurring, startDate, endDate,
                     repeatInterval, repeatUnit, executionTime,
-                    selectedDifficulty, selectedImportance
+                    selectedDifficulty, selectedImportance, uid
             );
             db.collection("tasks").document(task.getId())
                     .set(task)
@@ -247,7 +283,8 @@ public class NewTaskActivity extends AppCompatActivity {
                             "repeatInterval", repeatInterval,
                             "repeatUnit", repeatUnit != null ? repeatUnit.toString() : null,
                             "startDate", startDate,
-                            "endDate", endDate
+                            "endDate", endDate,
+                            "userId", uid
                     )
                     .addOnSuccessListener(aVoid -> {
                         Toast.makeText(this, "Task updated!", Toast.LENGTH_SHORT).show();

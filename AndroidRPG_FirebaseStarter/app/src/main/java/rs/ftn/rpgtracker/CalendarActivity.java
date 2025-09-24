@@ -2,6 +2,7 @@ package rs.ftn.rpgtracker;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -9,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -28,7 +30,10 @@ public class CalendarActivity extends AppCompatActivity {
 
     private RecyclerView calendarRecyclerView;
     private TextView tvMonthYear;
+    private Button btnPrevMonth, btnNextMonth;
+
     private FirebaseFirestore db;
+    private Calendar currentMonth;
 
     private final List<Date> daysInMonth = new ArrayList<>();
     private final List<Task> tasks = new ArrayList<>();
@@ -41,49 +46,75 @@ public class CalendarActivity extends AppCompatActivity {
 
         tvMonthYear = findViewById(R.id.tvMonthYear);
         calendarRecyclerView = findViewById(R.id.calendarRecyclerView);
+        btnPrevMonth = findViewById(R.id.btnPrevMonth);
+        btnNextMonth = findViewById(R.id.btnNextMonth);
 
         db = FirebaseFirestore.getInstance();
 
-        // 1. Generiši dane tekućeg meseca
-        generateDaysForCurrentMonth();
+        // start with current month
+        currentMonth = Calendar.getInstance();
 
-        // 2. Podesi RecyclerView
         adapter = new CalendarAdapter(this, daysInMonth, tasks);
         calendarRecyclerView.setLayoutManager(new GridLayoutManager(this, 7));
         calendarRecyclerView.setAdapter(adapter);
 
-        // 3. Učitaj zadatke iz Firestore
+        // load first month
+        generateDaysForMonth(currentMonth);
         loadTasksFromDb();
+
+        btnPrevMonth.setOnClickListener(v -> {
+            currentMonth.add(Calendar.MONTH, -1);
+            generateDaysForMonth(currentMonth);
+            loadTasksFromDb();
+        });
+
+        btnNextMonth.setOnClickListener(v -> {
+            currentMonth.add(Calendar.MONTH, 1);
+            generateDaysForMonth(currentMonth);
+            loadTasksFromDb();
+        });
     }
 
-    private void generateDaysForCurrentMonth() {
+    private void generateDaysForMonth(Calendar month) {
         daysInMonth.clear();
-        Calendar calendar = Calendar.getInstance();
 
         // naslov meseca
         SimpleDateFormat sdf = new SimpleDateFormat("MMMM yyyy", Locale.getDefault());
-        tvMonthYear.setText(sdf.format(calendar.getTime()));
+        tvMonthYear.setText(sdf.format(month.getTime()));
 
-        // postavi na prvi dan meseca
+        Calendar calendar = (Calendar) month.clone();
         calendar.set(Calendar.DAY_OF_MONTH, 1);
-        int firstDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) - 1; // da bi offset bio 0-based
+
+        int firstDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) - 1;
         if (firstDayOfWeek < 0) firstDayOfWeek = 6;
 
-        // dodaj prazne dane pre prvog dana u mesecu
+        // dodaj prazne dane pre prvog dana meseca
         for (int i = 0; i < firstDayOfWeek; i++) {
-            daysInMonth.add(null); // null znači prazan slot
+            daysInMonth.add(null);
         }
 
-        // dodaj sve dane u mesecu
+        // dodaj sve dane meseca
         int maxDay = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
         for (int day = 1; day <= maxDay; day++) {
             calendar.set(Calendar.DAY_OF_MONTH, day);
             daysInMonth.add(calendar.getTime());
         }
+
+        adapter.notifyDataSetChanged();
     }
 
     private void loadTasksFromDb() {
+        String uid = FirebaseAuth.getInstance().getCurrentUser() != null
+                ? FirebaseAuth.getInstance().getCurrentUser().getUid()
+                : null;
+
+        if (uid == null) {
+            Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         db.collection("tasks")
+                .whereEqualTo("userId", uid)   // 🔹 samo zadaci trenutnog korisnika
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     Log.d("FirestoreLoad", "Documents fetched: " + querySnapshot.size());
@@ -92,19 +123,23 @@ public class CalendarActivity extends AppCompatActivity {
                     for (QueryDocumentSnapshot doc : querySnapshot) {
                         try {
                             Task t = doc.toObject(Task.class);
+
+                            // mapiraj kategoriju
                             if (doc.contains("category")) {
                                 Map<String, Object> categoryMap = (Map<String, Object>) doc.get("category");
                                 if (categoryMap != null) {
+                                    String catId = (String) categoryMap.get("id");
                                     String name = (String) categoryMap.get("name");
                                     Long colorLong = (Long) categoryMap.get("color");
                                     int color = (colorLong != null) ? colorLong.intValue() : 0xFF9E9E9E;
-                                    t.setCategory(new Category(doc.getId(), name, color));
+
+                                    Category category = new Category(catId, name, color, uid);
+                                    t.setCategory(category);
                                 }
                             }
 
                             tasks.add(t);
                         } catch (Exception e) {
-                            e.printStackTrace();
                             Toast.makeText(this, "Greška pri parsiranju zadatka", Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -115,6 +150,5 @@ public class CalendarActivity extends AppCompatActivity {
                     Log.e("FirestoreLoad", "Failed to load tasks", e);
                     Toast.makeText(this, "Greška pri učitavanju zadataka: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
-
     }
 }

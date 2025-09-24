@@ -14,8 +14,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -25,11 +25,12 @@ import java.util.ArrayList;
 import rs.ftn.rpgtracker.adapter.CategoryAdapter;
 import rs.ftn.rpgtracker.model.Category;
 
-public class CategoryActivity extends AppCompatActivity{
+public class CategoryActivity extends AppCompatActivity {
     private ListView listView;
     private ArrayList<Category> categories;
     private ArrayAdapter<Category> adapter;
     private FirebaseFirestore db;
+    private FirebaseAuth auth;
     private Button btnAdd;
 
     @Override
@@ -38,12 +39,14 @@ public class CategoryActivity extends AppCompatActivity{
         setContentView(R.layout.activity_category);
 
         db = FirebaseFirestore.getInstance();
+        auth = FirebaseAuth.getInstance();
         categories = new ArrayList<>();
 
         listView = findViewById(R.id.listCategory);
         adapter = new CategoryAdapter(this, categories);
         listView.setAdapter(adapter);
         btnAdd = findViewById(R.id.btnAdd);
+
         listView.setOnItemClickListener((parent, view, position, id) -> {
             Category c = categories.get(position);
             Intent i = new Intent(CategoryActivity.this, EditCategoryActivity.class);
@@ -53,44 +56,45 @@ public class CategoryActivity extends AppCompatActivity{
             startActivity(i);
         });
 
-
         btnAdd.setOnClickListener(v -> startActivity(new Intent(this, NewCategoryActivity.class)));
-
-
-
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-
         categories.clear();
-
         getCategories();
     }
 
     public void getCategories() {
+        String uid = auth.getCurrentUser() != null ? auth.getCurrentUser().getUid() : null;
+        if (uid == null) {
+            Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         db.collection("categories")
+                .whereEqualTo("userId", uid)  // 🔹 samo kategorije trenutnog korisnika
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if(task.isSuccessful()){
-                            for(QueryDocumentSnapshot d: task.getResult()) {
-                                String id = d.getId();
-                                String name = d.getString("name");
-                                Long colorLong = d.getLong("color");
-                                int color = (colorLong != null) ? colorLong.intValue() : 0;
-                                Category category = new Category(id, name, color);
-                                categories.add(category);
-                            }
-                            adapter.notifyDataSetChanged();
-                        } else {
-                            Toast.makeText(CategoryActivity.this, "Error getting categories", Toast.LENGTH_SHORT).show();
+                .addOnCompleteListener((@NonNull Task<QuerySnapshot> task) -> {
+                    if(task.isSuccessful()){
+                        for(QueryDocumentSnapshot d: task.getResult()) {
+                            String id = d.getId();
+                            String name = d.getString("name");
+                            Long colorLong = d.getLong("color");
+                            int color = (colorLong != null) ? colorLong.intValue() : 0;
+                            String userId = d.getString("userId");
+
+                            Category category = new Category(id, name, color, userId);
+                            categories.add(category);
                         }
+                        adapter.notifyDataSetChanged();
+                    } else {
+                        Toast.makeText(CategoryActivity.this, "Error getting categories", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
+
     private void showEditDialog(Category category, int position) {
         EditText etName = new EditText(this);
         etName.setText(category.getName());
@@ -127,19 +131,29 @@ public class CategoryActivity extends AppCompatActivity{
     }
 
     private void updateCategory(Category category, int position, String newName, int newColor) {
+        String uid = auth.getCurrentUser() != null ? auth.getCurrentUser().getUid() : null;
+        if (uid == null) {
+            Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         db.collection("categories")
                 .document(category.getId())
-                .update("name", newName, "color", newColor)
+                .update(
+                        "name", newName,
+                        "color", newColor,
+                        "userId", uid  // 🔹 čuvaj userId i prilikom izmene
+                )
                 .addOnSuccessListener(aVoid -> {
-                    // Update local list so UI reflects changes
                     category.setName(newName);
                     category.setColor(newColor);
+                    category.setUserId(uid);
+
                     categories.set(position, category);
                     adapter.notifyDataSetChanged();
                     Toast.makeText(this, "Updated!", Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(e ->
-                                Toast.makeText(this, "Update failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                        Toast.makeText(this, "Update failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
-
 }

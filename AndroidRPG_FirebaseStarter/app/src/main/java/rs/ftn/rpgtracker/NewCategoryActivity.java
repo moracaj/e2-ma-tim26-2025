@@ -26,12 +26,13 @@ public class NewCategoryActivity extends AppCompatActivity {
     FirebaseAuth auth;
     FirebaseFirestore db;
 
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_category);
 
-        auth=FirebaseAuth.getInstance();
-        db=FirebaseFirestore.getInstance();
+        auth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
         name = findViewById(R.id.categoryName);
 
@@ -42,44 +43,23 @@ public class NewCategoryActivity extends AppCompatActivity {
         mColorPreview = findViewById(R.id.preview_selected_color);
         mDefaultColor = 0;
 
-        mPickColorButton.setOnClickListener(
-                new View.OnClickListener() {
-                    public void onClick(View v){
-                        openColorPickerDialogue();
-                    }
-                });
-        mSetColorButton.setOnClickListener(
-                new View.OnClickListener(){
-                    public void onClick(View v){
-                        name.setTextColor(mDefaultColor);
-                    }
-                });
+        mPickColorButton.setOnClickListener(v -> openColorPickerDialogue());
+        mSetColorButton.setOnClickListener(v -> name.setTextColor(mDefaultColor));
 
         mbtnAdd.setOnClickListener(view -> Create());
     }
-    public void openColorPickerDialogue() {
 
+    public void openColorPickerDialogue() {
         final AmbilWarnaDialog colorPickerDialogue = new AmbilWarnaDialog(this, mDefaultColor,
                 new AmbilWarnaDialog.OnAmbilWarnaListener() {
                     @Override
                     public void onCancel(AmbilWarnaDialog dialog) {
-                        // leave this function body as
-                        // blank, as the dialog
-                        // automatically closes when
-                        // clicked on cancel button
+                        // zatvara se automatski
                     }
 
                     @Override
                     public void onOk(AmbilWarnaDialog dialog, int color) {
-                        // change the mDefaultColor to
-                        // change the GFG text color as
-                        // it is returned when the OK
-                        // button is clicked from the
-                        // color picker dialog
                         mDefaultColor = color;
-
-                        // now change the picked color
-                        // preview box to mDefaultColor
                         mColorPreview.setBackgroundColor(mDefaultColor);
                     }
                 });
@@ -93,20 +73,27 @@ public class NewCategoryActivity extends AppCompatActivity {
             return;
         }
 
-        // prvo proveri da li postoji kategorija sa istom bojom
+        String uid = auth.getCurrentUser() != null ? auth.getCurrentUser().getUid() : null;
+        if (uid == null) {
+            Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // prvo proveri da li postoji kategorija sa istom bojom za istog korisnika
         db.collection("categories")
                 .whereEqualTo("color", mDefaultColor)
+                .whereEqualTo("userId", uid)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         if (!task.getResult().isEmpty()) {
-                            // postoji već ista boja
                             Toast.makeText(this, "Color already used in another category!", Toast.LENGTH_SHORT).show();
                         } else {
                             // boja je slobodna, možeš dodati novu kategoriju
                             Map<String, Object> category = new HashMap<>();
                             category.put("name", e);
                             category.put("color", mDefaultColor);
+                            category.put("userId", uid); // 🔹 obavezno dodaj userId
 
                             db.collection("categories")
                                     .add(category)
@@ -129,6 +116,4 @@ public class NewCategoryActivity extends AppCompatActivity {
                     }
                 });
     }
-
-
 }
