@@ -75,6 +75,13 @@ public class CalendarActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // 🔄 svaki put kad se vratiš na kalendar (npr. posle edit kategorije)
+        loadTasksFromDb();
+    }
+
     private void generateDaysForMonth(Calendar month) {
         daysInMonth.clear();
 
@@ -140,7 +147,7 @@ public class CalendarActivity extends AppCompatActivity {
 
                             tasks.add(t);
                         } catch (Exception e) {
-                            Toast.makeText(this, "Greška pri parsiranju zadatka", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "Parse error", Toast.LENGTH_SHORT).show();
                         }
                     }
 
@@ -148,7 +155,7 @@ public class CalendarActivity extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> {
                     Log.e("FirestoreLoad", "Failed to load tasks", e);
-                    Toast.makeText(this, "Greška pri učitavanju zadataka: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "Loading error: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
     }
 }

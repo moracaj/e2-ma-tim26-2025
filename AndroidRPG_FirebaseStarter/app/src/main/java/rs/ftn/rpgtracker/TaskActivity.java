@@ -41,9 +41,9 @@ public class TaskActivity extends AppCompatActivity {
         new TabLayoutMediator(tabLayout, viewPager,
                 (tab, position) -> {
                     if (position == 0) {
-                        tab.setText("Jednokratni");
+                        tab.setText("One time");
                     } else {
-                        tab.setText("Ponavljajući");
+                        tab.setText("Recurring");
                     }
                 }).attach();
     }
@@ -59,9 +59,9 @@ public class TaskActivity extends AppCompatActivity {
         @Override
         public Fragment createFragment(int position) {
             if (position == 0) {
-                return TaskListFragment.newInstance(false); // false = jednokratni
+                return TaskListFragment.newInstance(false); // false = one time
             } else {
-                return TaskListFragment.newInstance(true);  // true = ponavljajući
+                return TaskListFragment.newInstance(true);  // true = recurring
             }
         }
 

@@ -21,6 +21,8 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import rs.ftn.rpgtracker.adapter.CategoryAdapter;
 import rs.ftn.rpgtracker.model.Category;
@@ -142,18 +144,53 @@ public class CategoryActivity extends AppCompatActivity {
                 .update(
                         "name", newName,
                         "color", newColor,
-                        "userId", uid  // 🔹 čuvaj userId i prilikom izmene
+                        "userId", uid
                 )
                 .addOnSuccessListener(aVoid -> {
+                    // 1) Lokalno osveži listu
                     category.setName(newName);
                     category.setColor(newColor);
                     category.setUserId(uid);
-
                     categories.set(position, category);
                     adapter.notifyDataSetChanged();
                     Toast.makeText(this, "Updated!", Toast.LENGTH_SHORT).show();
+
+                    // 2) *** PROPAGIRAJ PROMENU U TASKOVE ***
+                    db.collection("tasks")
+                            .whereEqualTo("userId", uid)
+                            .whereEqualTo("category.userId", uid)
+                            .get()
+                            .addOnSuccessListener(snap -> {
+                                if (!snap.isEmpty()) {
+                                    // pripremi novu mapu kategorije
+                                    Map<String, Object> updatedCategory = new HashMap<>();
+                                    updatedCategory.put("id", category.getId());
+                                    updatedCategory.put("name", newName);
+                                    updatedCategory.put("color", newColor);
+                                    updatedCategory.put("userId", uid);
+
+                                    // batch update
+                                    com.google.firebase.firestore.WriteBatch batch = db.batch();
+                                    for (QueryDocumentSnapshot doc : snap) {
+                                        batch.update(doc.getReference(), "category", updatedCategory);
+                                    }
+
+                                    batch.commit()
+                                            .addOnSuccessListener(unused -> {
+                                                Toast.makeText(this, "Category propagated to tasks!", Toast.LENGTH_SHORT).show();
+                                            })
+                                            .addOnFailureListener(e ->
+                                                    Toast.makeText(this, "Batch update failed: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                                            );
+                                }
+                            })
+                            .addOnFailureListener(e ->
+                                    Toast.makeText(this, "Greška pri čitanju taskova: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                            );
                 })
                 .addOnFailureListener(e ->
                         Toast.makeText(this, "Update failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
+
+
 }

@@ -16,16 +16,16 @@ public class Task {
 
     private String userId;
     public enum RepeatUnit{
-        DAN,
-        NEDELJA
+        DAY,
+        WEEK
     }
     private RepeatUnit repeatUnit;
     private String executionTime;
     public enum Difficulty {
-        VEOMA_LAK(1),
-        LAK(3),
-        TEZAK(7),
-        EKSTREMNO_TEZAK(20);
+        VERY_EASY(1),
+        EASY(3),
+        DIFFICULT(7),
+        EXTREMLY_DIFFICULT(20);
 
         private int xpValue;
         Difficulty(int xpValue){
@@ -36,14 +36,14 @@ public class Task {
         }
         public String toString() {
             switch (this) {
-                case VEOMA_LAK:
-                    return "Realy easy";
-                case LAK:
+                case VERY_EASY:
+                    return "Very easy";
+                case EASY:
                     return "Easy";
-                case TEZAK:
-                    return "Hard";
-                case EKSTREMNO_TEZAK:
-                    return "Extreamly hard";
+                case DIFFICULT:
+                    return "Difficult";
+                case EXTREMLY_DIFFICULT:
+                    return "Extremly difficult";
                 default:
                     return super.toString();
             }
@@ -51,10 +51,10 @@ public class Task {
     }
     private Difficulty difficulty;
     public enum Importance {
-        NORMALAN(1),
-        VAZAN(3),
-        EKSTREMNO_VAZAN(10),
-        SPECIJALAN(100);
+        NORMAL(1),
+        IMPORTANT(3),
+        EXTREMLY_IMPORTANT(10),
+        SPECIAL(100);
 
         private final int xpValue;
 
@@ -69,10 +69,10 @@ public class Task {
         @Override
         public String toString() {
             switch (this) {
-                case NORMALAN: return "Normal";
-                case VAZAN: return "Important";
-                case EKSTREMNO_VAZAN: return "Extreamly important";
-                case SPECIJALAN: return "Special";
+                case NORMAL: return "Normal";
+                case IMPORTANT: return "Important";
+                case EXTREMLY_IMPORTANT: return "Extremly important";
+                case SPECIAL: return "Special";
                 default: return super.toString();
             }
         }
@@ -85,7 +85,7 @@ public class Task {
         COMPLETED,
         NOT_COMPLETED,
         PAUSED,
-        CANCELED
+        CANCELLED
     }
     private Status status;
     private Date createdAt;
@@ -253,15 +253,15 @@ public class Task {
         this.createdAt = createdAt;
     }
     public int getMaxQuota() {
-        if (difficulty == Difficulty.VEOMA_LAK || importance == Importance.NORMALAN) {
+        if (difficulty == Difficulty.VERY_EASY || importance == Importance.NORMAL) {
             return 5; // dnevno
-        } else if (difficulty == Difficulty.LAK || importance == Importance.VAZAN) {
+        } else if (difficulty == Difficulty.EASY || importance == Importance.IMPORTANT) {
             return 5; // dnevno
-        } else if (difficulty == Difficulty.TEZAK || importance == Importance.EKSTREMNO_VAZAN) {
+        } else if (difficulty == Difficulty.DIFFICULT || importance == Importance.EXTREMLY_IMPORTANT) {
             return 2; // dnevno
-        } else if (difficulty == Difficulty.EKSTREMNO_TEZAK) {
+        } else if (difficulty == Difficulty.EXTREMLY_DIFFICULT) {
             return 1; // nedeljno
-        } else if (importance == Importance.SPECIJALAN) {
+        } else if (importance == Importance.SPECIAL) {
             return 1; // mesečno
         }
         return Integer.MAX_VALUE; // default: bez limita
@@ -269,15 +269,15 @@ public class Task {
 
     /** Vremenska jedinica za kvotu (DAILY, WEEKLY, MONTHLY) */
     public String getQuotaUnit() {
-        if (difficulty == Difficulty.VEOMA_LAK || importance == Importance.NORMALAN) {
+        if (difficulty == Difficulty.VERY_EASY || importance == Importance.NORMAL) {
             return "DAILY";
-        } else if (difficulty == Difficulty.LAK || importance == Importance.VAZAN) {
+        } else if (difficulty == Difficulty.EASY || importance == Importance.IMPORTANT) {
             return "DAILY";
-        } else if (difficulty == Difficulty.TEZAK || importance == Importance.EKSTREMNO_VAZAN) {
+        } else if (difficulty == Difficulty.DIFFICULT || importance == Importance.EXTREMLY_IMPORTANT) {
             return "DAILY";
-        } else if (difficulty == Difficulty.EKSTREMNO_TEZAK) {
+        } else if (difficulty == Difficulty.EXTREMLY_DIFFICULT) {
             return "WEEKLY";
-        } else if (importance == Importance.SPECIJALAN) {
+        } else if (importance == Importance.SPECIAL) {
             return "MONTHLY";
         }
         return "UNLIMITED";
@@ -308,7 +308,7 @@ public class Task {
         }
     }
     public boolean canBeUpdated(Date currentDate) {
-        if (status == Status.CANCELED || status == Status.NOT_COMPLETED) return false;
+        if (status == Status.CANCELLED || status == Status.NOT_COMPLETED) return false;
 
         // ako je prošlo više od 3 dana od startDate → automatski NOT_COMPLETED
         if (startDate != null) {

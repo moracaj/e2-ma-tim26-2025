@@ -1,6 +1,7 @@
 package rs.ftn.rpgtracker;
 
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -178,14 +179,14 @@ public class NewTaskActivity extends AppCompatActivity {
                             Long colorLong = doc.getLong("color");
                             int color = (colorLong != null) ? colorLong.intValue() : 0;
 
-                            // 🔹 uzimamo userId iz dokumenta (sigurnosti radi)
+                            //uzimamo userId iz dokumenta (sigurnosti radi)
                             String ownerId = doc.getString("userId");
                             categories.add(new Category(id, name, color, ownerId));
                         }
                         CategoryAdapter adapter = new CategoryAdapter(this, categories);
                         spinnerCategory.setAdapter(adapter);
                     } else {
-                        Toast.makeText(this, "Greška pri učitavanju kategorija", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Error loading categories", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -208,7 +209,7 @@ public class NewTaskActivity extends AppCompatActivity {
                         rbRecurring.setChecked(true);
                         layoutRecurring.setVisibility(View.VISIBLE);
                         etRepeatInterval.setText(String.valueOf(currentTask.getRepeatInterval()));
-                        spinnerRepeatUnit.setSelection(currentTask.getRepeatUnit() == Task.RepeatUnit.DAN ? 0 : 1);
+                        spinnerRepeatUnit.setSelection(currentTask.getRepeatUnit() == Task.RepeatUnit.DAY ? 0 : 1);
 
                         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
                         startDateStr = sdf.format(currentTask.getStartDate());
@@ -237,7 +238,7 @@ public class NewTaskActivity extends AppCompatActivity {
             String intervalStr = etRepeatInterval.getText().toString();
             repeatInterval = TextUtils.isEmpty(intervalStr) ? 1 : Integer.parseInt(intervalStr);
             String unitStr = spinnerRepeatUnit.getSelectedItem().toString();
-            repeatUnit = unitStr.equals("Dan") ? Task.RepeatUnit.DAN : Task.RepeatUnit.NEDELJA;
+            repeatUnit = unitStr.equals("Day") ? Task.RepeatUnit.DAY : Task.RepeatUnit.WEEK;
 
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
             try {
@@ -269,8 +270,13 @@ public class NewTaskActivity extends AppCompatActivity {
                     .set(task)
                     .addOnSuccessListener(aVoid -> {
                         Toast.makeText(this, "Task created!", Toast.LENGTH_SHORT).show();
+
+                        Intent intent = new Intent(NewTaskActivity.this, TaskActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
                         finish();
                     });
+
         } else {
             // IZMENI
             db.collection("tasks").document(taskId)
@@ -278,8 +284,8 @@ public class NewTaskActivity extends AppCompatActivity {
                             "name", name,
                             "description", desc,
                             "executionTime", executionTime,
-                            "difficulty", selectedDifficulty.toString(),
-                            "importance", selectedImportance.toString(),
+                            "difficulty", selectedDifficulty,
+                            "importance", selectedImportance,
                             "repeatInterval", repeatInterval,
                             "repeatUnit", repeatUnit != null ? repeatUnit.toString() : null,
                             "startDate", startDate,

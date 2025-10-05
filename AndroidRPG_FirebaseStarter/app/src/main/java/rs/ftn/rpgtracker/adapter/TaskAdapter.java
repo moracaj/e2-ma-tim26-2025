@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,40 +48,40 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
         holder.tvTaskName.setText(task.getName());
         holder.tvTaskDescription.setText(task.getDescription());
-        holder.tvTaskCategory.setText("Kategorija: " + (task.getCategory() != null ? task.getCategory().getName() : ""));
-        holder.tvTaskTime.setText("Vreme: " + task.getExecutionTime());
+        holder.tvTaskCategory.setText("Category: " + (task.getCategory() != null ? task.getCategory().getName() : ""));
+        holder.tvTaskTime.setText("Time: " + task.getExecutionTime());
 
-        // 🔹 koristimo status iz string-array umesto enum.toString()
+        //koristimo status iz string-array umesto enum.toString()
         String statusText = statusArray[task.getStatus().ordinal()];
         holder.tvTaskStatus.setText("Status: " + statusText);
 
-        // 👉 Klik na zadatak → dijalog sa opcijama
+        // Klik na zadatak → dijalog sa opcijama
         holder.itemView.setOnClickListener(v -> showTaskDialog(task, holder.getAdapterPosition()));
 
-        // 👉 Edit
+        //Edit
         holder.btnEditTask.setOnClickListener(v -> {
             Intent intent = new Intent(context, NewTaskActivity.class);
             intent.putExtra("taskId", task.getId());
             context.startActivity(intent);
         });
 
-        // 👉 Delete
+
         holder.btnDeleteTask.setOnClickListener(v -> {
             new android.app.AlertDialog.Builder(context)
-                    .setTitle("Brisanje zadatka")
-                    .setMessage("Da li ste sigurni da želite da obrišete ovaj zadatak?")
-                    .setPositiveButton("Da", (dialog, which) -> {
+                    .setTitle("Delete task")
+                    .setMessage("Are you sure you want to delete this task?")
+                    .setPositiveButton("Yes", (dialog, which) -> {
                         FirebaseFirestore.getInstance().collection("tasks").document(task.getId())
                                 .delete()
                                 .addOnSuccessListener(aVoid -> {
                                     taskList.remove(holder.getAdapterPosition());
                                     notifyItemRemoved(holder.getAdapterPosition());
-                                    Toast.makeText(context, "Zadatak obrisan", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(context, "Task deleted", Toast.LENGTH_SHORT).show();
                                 })
                                 .addOnFailureListener(e ->
-                                        Toast.makeText(context, "Greška pri brisanju: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                                        Toast.makeText(context, "Something went wrong: " + e.getMessage(), Toast.LENGTH_SHORT).show());
                     })
-                    .setNegativeButton("Ne", (dialog, which) -> dialog.dismiss())
+                    .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
                     .show();
         });
 
@@ -91,7 +90,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             case COMPLETED:
                 holder.tvTaskStatus.setTextColor(context.getResources().getColor(android.R.color.holo_green_dark));
                 break;
-            case CANCELED:
+            case CANCELLED:
                 holder.tvTaskStatus.setTextColor(context.getResources().getColor(android.R.color.holo_red_dark));
                 break;
             case PAUSED:
@@ -111,19 +110,19 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(context)
                 .setTitle(task.getName())
-                .setMessage("Opis: " + (task.getDescription() != null ? task.getDescription() : "Nema opisa") +
-                        "\nVreme: " + task.getExecutionTime() +
+                .setMessage("Description: " + (task.getDescription() != null ? task.getDescription() : "No description") +
+                        "\nTime: " + task.getExecutionTime() +
                         "\nStatus: " + statusText)
                 .setCancelable(true);
 
         if (task.getStatus() == Task.Status.ACTIVE) {
-            builder.setPositiveButton("Urađeno", (dialog, which) -> updateStatus(task, Task.Status.COMPLETED, position));
-            builder.setNegativeButton("Otkazano", (dialog, which) -> updateStatus(task, Task.Status.CANCELED, position));
+            builder.setPositiveButton("Completed", (dialog, which) -> updateStatus(task, Task.Status.COMPLETED, position));
+            builder.setNegativeButton("Cancelled", (dialog, which) -> updateStatus(task, Task.Status.CANCELLED, position));
             if (task.isRecurring()) {
-                builder.setNeutralButton("Pauziraj", (dialog, which) -> updateStatus(task, Task.Status.PAUSED, position));
+                builder.setNeutralButton("Paused", (dialog, which) -> updateStatus(task, Task.Status.PAUSED, position));
             }
         } else if (task.getStatus() == Task.Status.PAUSED) {
-            builder.setPositiveButton("Aktiviraj ponovo", (dialog, which) -> updateStatus(task, Task.Status.ACTIVE, position));
+            builder.setPositiveButton("Activate again", (dialog, which) -> updateStatus(task, Task.Status.ACTIVE, position));
         }
 
         builder.show();
@@ -133,29 +132,29 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         Date today = new Date();
 
         if (!task.canBeUpdated(today)) {
-            Toast.makeText(context, "Zadatak se više ne može menjati.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "The task can no longer be changed.", Toast.LENGTH_SHORT).show();
             notifyItemChanged(position);
             return;
         }
 
         if (task.getStatus() == Task.Status.ACTIVE) {
             if (newStatus == Task.Status.COMPLETED ||
-                    newStatus == Task.Status.CANCELED ||
+                    newStatus == Task.Status.CANCELLED ||
                     newStatus == Task.Status.PAUSED) {
                 task.setStatus(newStatus);
             } else {
-                Toast.makeText(context, "Nedozvoljena akcija!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Not allowed!", Toast.LENGTH_SHORT).show();
                 return;
             }
         } else if (task.getStatus() == Task.Status.PAUSED) {
             if (newStatus == Task.Status.ACTIVE) {
                 task.setStatus(Task.Status.ACTIVE);
             } else {
-                Toast.makeText(context, "Možeš samo ponovo aktivirati ovaj zadatak.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "You can only activate task again.", Toast.LENGTH_SHORT).show();
                 return;
             }
         } else {
-            Toast.makeText(context, "Ovaj zadatak se ne može menjati.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "This task can't be changed.", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -172,7 +171,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                     notifyItemChanged(position);
                 })
                 .addOnFailureListener(e ->
-                        Toast.makeText(context, "Greška pri ažuriranju statusa", Toast.LENGTH_SHORT).show());
+                        Toast.makeText(context, "Error updating status", Toast.LENGTH_SHORT).show());
     }
 
     private void addXpToUser(int xp) {
@@ -184,7 +183,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 .addOnSuccessListener(aVoid ->
                         Toast.makeText(context, "+ " + xp + " XP!", Toast.LENGTH_SHORT).show())
                 .addOnFailureListener(e ->
-                        Toast.makeText(context, "Greška pri dodavanju XP", Toast.LENGTH_SHORT).show());
+                        Toast.makeText(context, "Error adding XP", Toast.LENGTH_SHORT).show());
     }
 
     @Override

@@ -9,7 +9,11 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import yuku.ambilwarna.AmbilWarnaDialog;
 
@@ -81,14 +85,45 @@ public class EditCategoryActivity extends AppCompatActivity {
             return;
         }
 
+        // 1) Update kategorije
         db.collection("categories")
                 .document(docId)
                 .update("name", newName, "color", selectedColor)
                 .addOnSuccessListener(unused -> {
                     Toast.makeText(this, "Category updated", Toast.LENGTH_SHORT).show();
-                    finish(); // go back to list; CategoryActivity.onStart() will reload
+
+                    // 2) Pronađi sve taskove koji koriste ovu kategoriju
+                    String uid = FirebaseAuth.getInstance().getCurrentUser() != null
+                            ? FirebaseAuth.getInstance().getCurrentUser().getUid()
+                            : null;
+
+                    if (uid != null) {
+                        db.collection("tasks")
+                                .whereEqualTo("userId", uid)
+                                .whereEqualTo("category.id", docId) // filtriraj taskove vezane za kategoriju
+                                .get()
+                                .addOnSuccessListener(snap -> {
+                                    for (com.google.firebase.firestore.DocumentSnapshot doc : snap) {
+                                        // 3) Kreiraj novu mapu kategorije
+                                        Map<String, Object> updatedCategory = new HashMap<>();
+                                        updatedCategory.put("id", docId);
+                                        updatedCategory.put("name", newName);
+                                        updatedCategory.put("color", selectedColor);
+                                        updatedCategory.put("userId", uid);
+
+                                        // 4) Pregazi staru kategoriju u tasku
+                                        doc.getReference().update("category", updatedCategory);
+                                    }
+                                })
+                                .addOnFailureListener(e ->
+                                        Toast.makeText(this, "Task update failed: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                                );
+                    }
+
+                    finish(); // vrati se nazad, CategoryActivity.onStart() će ponovo učitati liste
                 })
                 .addOnFailureListener(e ->
-                                Toast.makeText(this, "Update failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                        Toast.makeText(this, "Update failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
+
 }

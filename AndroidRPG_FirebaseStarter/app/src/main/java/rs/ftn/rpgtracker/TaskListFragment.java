@@ -64,6 +64,11 @@ public class TaskListFragment extends Fragment {
 
         return view;
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadTasksFromDb();
+    }
 
     private void loadTasksFromDb() {
         String uid = FirebaseAuth.getInstance().getCurrentUser() != null
@@ -88,6 +93,6 @@ public class TaskListFragment extends Fragment {
                     taskAdapter.notifyDataSetChanged();
                 })
                 .addOnFailureListener(e ->
-                        Toast.makeText(getContext(), "Greška pri učitavanju zadataka: " + e.getMessage(), Toast.LENGTH_LONG).show());
+                        Toast.makeText(getContext(), "Error loading task: " + e.getMessage(), Toast.LENGTH_LONG).show());
     }
 }
