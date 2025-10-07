@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "rs.ftn.rpgtracker.app-mergeDebugResources-43:/values-w400dp-port-v13/values-w400dp-port-v13.xml",
+            "outputFile": "rs.ftn.rpgtracker.app-mergeDebugResources-44:/values-w400dp-port-v13/values-w400dp-port-v13.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\HP\\.gradle\\caches\\9.0-milestone-1\\transforms\\8daea06ccaeec0e64c13ce2cd75a6678\\transformed\\material-1.13.0\\res\\values-w400dp-port-v13\\values-w400dp-port-v13.xml",
+                    "source": "C:\\Users\\Korisnik\\.gradle\\caches\\9.0-milestone-1\\transforms\\8daea06ccaeec0e64c13ce2cd75a6678\\transformed\\material-1.13.0\\res\\values-w400dp-port-v13\\values-w400dp-port-v13.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9",
                         "startColumns": "4,4,4,4,4,4,4,4",

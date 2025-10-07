@@ -23,6 +23,8 @@ public class ShopActivity extends AppCompatActivity {
     TextView tvCoins;
     ListView listCatalog, listInventory;
     FirebaseFirestore db;
+    private ArrayList<InvItem> invItems = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +43,7 @@ public class ShopActivity extends AppCompatActivity {
         listCatalog.setOnItemClickListener((parent, view, position, id) ->
                 confirmBuy((Item) parent.getItemAtPosition(position)));
     }
+
 
     private void refresh() {
         db.collection("users").document(uid).get().addOnSuccessListener(doc -> {
@@ -110,6 +113,40 @@ public class ShopActivity extends AppCompatActivity {
         });
     }
 
+    private int priceFor(String type, String name, String bonusType, double bonusValue, int currentLevel){
+        int prevLevel = Math.max(1, currentLevel - 1);
+        int base = LevelCalculator.coinsForBoss(prevLevel);
+
+        if ("potion".equals(type)) {
+            if ("pp_percent".equals(bonusType) && (int)bonusValue == 20) return (int)Math.round(base * 0.50); // 50%
+            if ("pp_percent".equals(bonusType) && (int)bonusValue == 40) return (int)Math.round(base * 0.70); // 70%
+            if ("pp_perm_percent".equals(bonusType) && (int)bonusValue == 5)  return (int)Math.round(base * 2.00);   // 200%
+            if ("pp_perm_percent".equals(bonusType) && (int)bonusValue == 10) return (int)Math.round(base * 10.00);  // 1000%
+        } else if ("armor".equals(type)) {
+            // Gloves +10% PP = 60%, Shield +10% HIT = 60%, Boots +40% extra attack = 80%
+            if ("pp_percent".equals(bonusType) && (int)bonusValue == 10) return (int)Math.round(base * 0.60);
+            if ("hit_percent".equals(bonusType) && (int)bonusValue == 10) return (int)Math.round(base * 0.60);
+            if ("extra_attack_chance".equals(bonusType) && (int)bonusValue == 40) return (int)Math.round(base * 0.80);
+        }
+        // Weapon se NE kupuje u shopu po specifikaciji — vrati veliko da onemogući kupovinu
+        return Integer.MAX_VALUE;
+    }
+
+
+
+    static class InvItem {
+        int invId;           // inventory.id
+        String type;         // ec.type  -> "potion" | "armor" | "weapon"
+        String name;         // ec.name
+        String bonusType;    // ec.bonus_type
+        double bonusValue;   // ec.bonus_value
+        int active;          // inventory.active (0/1)
+        int permanent;       // inventory.permanent (0/1)
+        Integer expires;     // inventory.expires_after_battles (može null)
+        int level;           // inventory.level
+        int durationBattles; // ec.duration_battles
+        int upgradeable;     // ec.upgradeable (0/1)
+    }
     static class Item {
         int id;
         String type, name, bonusType;
@@ -124,5 +161,12 @@ public class ShopActivity extends AppCompatActivity {
             this.permanent = permanent; this.upgradeable = upgradeable;
         }
         @Override public String toString() { return name + " (" + type + ") - " + price + "c"; }
+    }
+
+    // primer helper metoda u ShopActivity
+    private void insertIntoInventoryFromCatalog(SQLiteDatabase db, int catalogId){
+        db.execSQL("INSERT INTO inventory(type,name,bonus_type,bonus_value,duration_battles,permanent,level,equipped,remaining_battles) " +
+                        "SELECT type,name,bonus_type,bonus_value,duration_battles,permanent,0,0,NULL FROM equipment_catalog WHERE id=?",
+                new Object[]{ catalogId });
     }
 }
