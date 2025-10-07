@@ -17,6 +17,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 
+import rs.ftn.rpgtracker.model.Item;
+
 public class ShopActivity extends AppCompatActivity {
     AppDbHelper helper;
     String uid;
@@ -79,8 +81,8 @@ public class ShopActivity extends AppCompatActivity {
 
     private void confirmBuy(Item item) {
         new AlertDialog.Builder(this)
-                .setTitle("Buy " + item.name + "?")
-                .setMessage("Price: " + item.price + " coins")
+                .setTitle("Buy " + item.getName() + "?")
+                .setMessage("Price: " + item.getPrice() + " coins")
                 .setPositiveButton("Buy", (d, w) -> buy(item))
                 .setNegativeButton("Cancel", null)
                 .show();
@@ -90,39 +92,23 @@ public class ShopActivity extends AppCompatActivity {
         DocumentReference userRef = db.collection("users").document(uid);
         userRef.get().addOnSuccessListener(doc -> {
             long coins = doc.getLong("coins") == null ? 0 : doc.getLong("coins");
-            if (coins < item.price) {
+            if (coins < item.getPrice()) {
                 Toast.makeText(this, "Not enough coins", Toast.LENGTH_SHORT).show();
                 return;
             }
-            userRef.update("coins", coins - item.price).addOnSuccessListener(a -> {
+            userRef.update("coins", coins - item.getPrice()).addOnSuccessListener(a -> {
                 SQLiteDatabase w = helper.getWritableDatabase();
                 ContentValues cv = new ContentValues();
                 cv.put("user_uid", uid);
-                cv.put("equipment_id", item.id);
+                cv.put("equipment_id", item.getId());
                 cv.put("active", 0);
-                cv.put("expires_after_battles", item.durationBattles);
-                cv.put("permanent", item.permanent ? 1 : 0);
+                cv.put("expires_after_battles", item.getDurationBattles());
+                cv.put("permanent", item.isPermanent() ? 1 : 0);
                 cv.put("level", 0);
                 w.insert("inventory", null, cv);
-                Toast.makeText(this, "Bought " + item.name, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Bought " + item.getName(), Toast.LENGTH_SHORT).show();
                 refresh();
             });
         });
-    }
-
-    static class Item {
-        int id;
-        String type, name, bonusType;
-        double bonusValue;
-        int price, durationBattles;
-        boolean permanent, upgradeable;
-
-        Item(int id, String type, String name, String bonusType, double bonusValue,
-             int price, int durationBattles, boolean permanent, boolean upgradeable) {
-            this.id = id; this.type = type; this.name = name; this.bonusType = bonusType;
-            this.bonusValue = bonusValue; this.price = price; this.durationBattles = durationBattles;
-            this.permanent = permanent; this.upgradeable = upgradeable;
-        }
-        @Override public String toString() { return name + " (" + type + ") - " + price + "c"; }
     }
 }
