@@ -36,8 +36,29 @@
       android:text="Alliance Chat" />
 
   <Button
+      android:id="@+id/btnTask"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="Tasks" />
+
+  <Button
+      android:id="@+id/btnCategory"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="Categories" />
+
+  <Button
+      android:id="@+id/btnEquipment"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="Equipment" />
+
+  <Button
       android:id="@+id/btnLogout"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:text="Logout" />
+
+
+
 </LinearLayout>

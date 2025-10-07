@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "rs.ftn.rpgtracker.app-mergeDebugResources-38:/values-watch-v20/values-watch-v20.xml",
+            "outputFile": "rs.ftn.rpgtracker.app-mergeDebugResources-44:/values-watch-v20/values-watch-v20.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\Korisnik\\.gradle\\caches\\9.0-milestone-1\\transforms\\e4426ec4d972927c33a9928e3d0231ea\\transformed\\appcompat-1.7.0\\res\\values-watch-v20\\values-watch-v20.xml",
+                    "source": "C:\\Users\\Korisnik\\.gradle\\caches\\9.0-milestone-1\\transforms\\6b235bc1a5d7496560259fcb37efcf29\\transformed\\appcompat-1.7.0\\res\\values-watch-v20\\values-watch-v20.xml",
                     "from": {
                         "startLines": "2,5,8",
                         "startColumns": "4,4,4",
@@ -23,7 +23,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\Korisnik\\.gradle\\caches\\9.0-milestone-1\\transforms\\c3815741bf4b4e53662f4b724f310f0e\\transformed\\jetified-play-services-auth-20.7.0\\res\\values-watch-v20\\values.xml",
+                    "source": "C:\\Users\\Korisnik\\.gradle\\caches\\9.0-milestone-1\\transforms\\b85a8016147b6aa3f85393ea30519fcf\\transformed\\jetified-play-services-auth-20.7.0\\res\\values-watch-v20\\values.xml",
                     "from": {
                         "startLines": "4,5,6,7,8,9,10,11",
                         "startColumns": "0,0,0,0,0,0,0,0",

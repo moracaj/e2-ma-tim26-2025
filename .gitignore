@@ -1,0 +1,45 @@
+# Built application files
+AndroidRPG_FirebaseStarter/*.apk
+AndroidRPG_FirebaseStarter/*.ap_
+
+# Java class files
+AndroidRPG_FirebaseStarter/*.class
+
+# Generated files
+AndroidRPG_FirebaseStarter/bin/
+AndroidRPG_FirebaseStarter/gen/
+
+# Gradle
+AndroidRPG_FirebaseStarter/.gradle/
+AndroidRPG_FirebaseStarter/gradle/
+AndroidRPG_FirebaseStarter/build/
+AndroidRPG_FirebaseStarter/*/.gradle/
+
+# App/module build folders
+AndroidRPG_FirebaseStarter/*/build/
+
+# Log Files
+AndroidRPG_FirebaseStarter/*.log
+
+# Android Studio generated files
+AndroidRPG_FirebaseStarter/.idea/workspace.xml
+AndroidRPG_FirebaseStarter/.idea/tasks.xml
+AndroidRPG_FirebaseStarter/.idea/.name
+AndroidRPG_FirebaseStarter/.idea/compiler.xml
+AndroidRPG_FirebaseStarter/.idea/copyright/profiles_settings.xml
+AndroidRPG_FirebaseStarter/.idea/encodings.xml
+AndroidRPG_FirebaseStarter/.idea/misc.xml
+AndroidRPG_FirebaseStarter/.idea/modules.xml
+AndroidRPG_FirebaseStarter/.idea/scopes/scope_settings.xml
+AndroidRPG_FirebaseStarter/.idea/vcs.xml
+AndroidRPG_FirebaseStarter/*.iml
+
+# Firebase client config (Android) - ne želimo da pushujemo
+AndroidRPG_FirebaseStarter/app/google-services.json
+**/google-services.json
+
+# Firebase Admin/service account ključevi (ako ih ima) - NIKAD ne pushovati
+**/serviceAccount*.json
+**/*-firebase-adminsdk-*.json
+
+

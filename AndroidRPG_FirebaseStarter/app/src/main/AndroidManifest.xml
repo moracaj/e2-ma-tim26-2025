@@ -7,12 +7,20 @@
 <uses-feature android:name="android.hardware.camera" android:required="false"/>
   <application android:allowBackup="true" android:label="RPGTracker" android:supportsRtl="true" android:theme="@style/Theme.RPGTracker" android:name=".App">
     <activity android:name=".RegisterActivity" />
+    <activity android:name=".CategoryActivity" />
+    <activity android:name=".EditCategoryActivity"/>
+    <activity android:name=".NewCategoryActivity" />
+    <activity android:name=".TaskActivity"/>
+    <activity android:name=".NewTaskActivity"/>
+    <activity android:name=".CalendarActivity"/>
     <activity android:name=".MainActivity" />
     <activity android:name=".ProfileActivity" />
     <activity android:name=".ShopActivity" />
     <activity android:name=".FriendsActivity" />
     <activity android:name=".ChatActivity" />
     <activity android:name=".ViewProfileActivity" />
+    <activity android:name=".EquipmentActivity"/>
+
     <receiver
         android:name=".InviteActionReceiver"
         android:exported="false" />
