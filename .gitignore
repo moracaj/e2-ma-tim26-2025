@@ -33,3 +33,13 @@ AndroidRPG_FirebaseStarter/.idea/modules.xml
 AndroidRPG_FirebaseStarter/.idea/scopes/scope_settings.xml
 AndroidRPG_FirebaseStarter/.idea/vcs.xml
 AndroidRPG_FirebaseStarter/*.iml
+
+# Firebase client config (Android) - ne želimo da pushujemo
+AndroidRPG_FirebaseStarter/app/google-services.json
+**/google-services.json
+
+# Firebase Admin/service account ključevi (ako ih ima) - NIKAD ne pushovati
+**/serviceAccount*.json
+**/*-firebase-adminsdk-*.json
+
+

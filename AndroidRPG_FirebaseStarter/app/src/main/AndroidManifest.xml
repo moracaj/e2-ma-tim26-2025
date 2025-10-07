@@ -19,6 +19,8 @@
     <activity android:name=".FriendsActivity" />
     <activity android:name=".ChatActivity" />
     <activity android:name=".ViewProfileActivity" />
+    <activity android:name=".EquipmentActivity"/>
+
     <receiver
         android:name=".InviteActionReceiver"
         android:exported="false" />

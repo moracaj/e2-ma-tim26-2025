@@ -50,6 +50,9 @@ public class MainActivity extends AppCompatActivity {
     btnLogout=findViewById(R.id.btnLogout);
     btnCategory = findViewById(R.id.btnCategory);
     btnTask = findViewById(R.id.btnTask);
+    Button btnEquipment = findViewById(R.id.btnEquipment);
+    btnEquipment.setOnClickListener(v -> startActivity(new Intent(this, EquipmentActivity.class)));
+
     btnProfile.setOnClickListener(v->startActivity(new Intent(this, ProfileActivity.class)));
     btnShop.setOnClickListener(v->startActivity(new Intent(this, ShopActivity.class)));
     btnFriends.setOnClickListener(v->startActivity(new Intent(this, FriendsActivity.class)));
