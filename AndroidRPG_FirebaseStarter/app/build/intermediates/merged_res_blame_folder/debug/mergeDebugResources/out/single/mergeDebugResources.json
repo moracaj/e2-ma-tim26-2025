@@ -76,6 +76,10 @@
         "source": "C:\\Users\\Korisnik\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-main-48:\\layout\\dialog_change_password.xml"
     },
     {
+        "merged": "C:\\Users\\Korisnik\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-debug-46:\\layout_activity_statistics.xml.flat",
+        "source": "C:\\Users\\Korisnik\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-main-48:\\layout\\activity_statistics.xml"
+    },
+    {
         "merged": "C:\\Users\\Korisnik\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-debug-46:\\layout_item_inventory_equipment.xml.flat",
         "source": "C:\\Users\\Korisnik\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-main-48:\\layout\\item_inventory_equipment.xml"
     },
@@ -134,10 +138,6 @@
     {
         "merged": "C:\\Users\\Korisnik\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-debug-46:\\layout_view_equipment_summary.xml.flat",
         "source": "C:\\Users\\Korisnik\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-main-48:\\layout\\view_equipment_summary.xml"
-    },
-    {
-        "merged": "rs.ftn.rpgtracker.app-debug-46:/layout_activity_statistics.xml.flat",
-        "source": "rs.ftn.rpgtracker.app-main-48:/layout/activity_statistics.xml"
     },
     {
         "merged": "C:\\Users\\Korisnik\\.gradle\\daemon\\9.0-milestone-1\\rs.ftn.rpgtracker.app-debug-46:\\layout_activity_new_category.xml.flat",
