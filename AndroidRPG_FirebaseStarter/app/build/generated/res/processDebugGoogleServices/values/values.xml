@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="gcm_defaultSenderId" translatable="false">614035297054</string>
-    <string name="google_api_key" translatable="false">AIzaSyCmNF2VWJvgZTmrg2cWVgBEK5IwyejuPgc</string>
-    <string name="google_app_id" translatable="false">1:614035297054:android:eb4759d08000bd987eef0f</string>
-    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyCmNF2VWJvgZTmrg2cWVgBEK5IwyejuPgc</string>
-    <string name="google_storage_bucket" translatable="false">androidrpgstarter-245fb.firebasestorage.app</string>
-    <string name="project_id" translatable="false">androidrpgstarter-245fb</string>
+    <string name="gcm_defaultSenderId" translatable="false">928899171282</string>
+    <string name="google_api_key" translatable="false">AIzaSyD_jf-0JGl1eGQbBzgh9F3uBEZkrxy2UVY</string>
+    <string name="google_app_id" translatable="false">1:928899171282:android:0fedae65c12b41fea33e0b</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyD_jf-0JGl1eGQbBzgh9F3uBEZkrxy2UVY</string>
+    <string name="google_storage_bucket" translatable="false">androidrpgstarter.firebasestorage.app</string>
+    <string name="project_id" translatable="false">androidrpgstarter</string>
 </resources>
