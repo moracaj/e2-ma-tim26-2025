@@ -13,7 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Date;
@@ -178,13 +177,38 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        db.collection("users").document(uid)
-                .update("xp", FieldValue.increment(xp))
-                .addOnSuccessListener(aVoid ->
-                        Toast.makeText(context, "+ " + xp + " XP!", Toast.LENGTH_SHORT).show())
-                .addOnFailureListener(e ->
-                        Toast.makeText(context, "Error adding XP", Toast.LENGTH_SHORT).show());
+        db.collection("users").document(uid).get().addOnSuccessListener(doc -> {
+            if (doc.exists()) {
+                long currentXp = doc.getLong("xp") != null ? doc.getLong("xp") : 0;
+                long nextLevelXp = doc.getLong("nextLevelXp") != null ? doc.getLong("nextLevelXp") : 100;
+                long level = doc.getLong("level") != null ? doc.getLong("level") : 1;
+
+                currentXp += xp; // dodaj XP nagradu
+
+                if (currentXp >= nextLevelXp) {
+                    level++;
+                    currentXp = 0; // reset XP jer je prešao nivo
+                    db.collection("users").document(uid)
+                            .update("level", level,
+                                    "xp", currentXp,
+                                    "nextLevelXp", nextLevelXp * 1.5,
+                                    "canFightBoss", true)
+                            .addOnSuccessListener(aVoid ->
+                                    Toast.makeText(context, "🎉 Level up! You can fight the boss now!", Toast.LENGTH_LONG).show())
+                            .addOnFailureListener(e ->
+                                    Toast.makeText(context, "Error leveling up: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                } else {
+                    db.collection("users").document(uid)
+                            .update("xp", currentXp)
+                            .addOnSuccessListener(aVoid ->
+                                    Toast.makeText(context, "+ " + xp + " XP!", Toast.LENGTH_SHORT).show())
+                            .addOnFailureListener(e ->
+                                    Toast.makeText(context, "Error adding XP", Toast.LENGTH_SHORT).show());
+                }
+            }
+        });
     }
+
 
     @Override
     public int getItemCount() {

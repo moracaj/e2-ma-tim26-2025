@@ -12,6 +12,8 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class TaskActivity extends AppCompatActivity {
 
@@ -23,21 +25,19 @@ public class TaskActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_task); // koristi xml koji smo napravili
+        setContentView(R.layout.activity_task);
 
         tabLayout = findViewById(R.id.tabLayout);
         viewPager = findViewById(R.id.viewPager);
 
         btnAddTask = findViewById(R.id.btnAddTask);
         btnCalendar = findViewById(R.id.btnCalendar);
+
         btnAddTask.setOnClickListener(v -> startActivity(new Intent(this, NewTaskActivity.class)));
         btnCalendar.setOnClickListener(v -> startActivity(new Intent(this, CalendarActivity.class)));
 
-
-        // Set adapter za ViewPager2
         viewPager.setAdapter(new TaskPagerAdapter(this));
 
-        // Poveži TabLayout i ViewPager2
         new TabLayoutMediator(tabLayout, viewPager,
                 (tab, position) -> {
                     if (position == 0) {
@@ -48,9 +48,36 @@ public class TaskActivity extends AppCompatActivity {
                 }).attach();
     }
 
-    // Adapter za ViewPager2
-    private static class TaskPagerAdapter extends FragmentStateAdapter {
+    //Metoda za dodavanje XP-a nakon uspešnog zavrsetka zadatka
+    public void addXpForTaskCompletion() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
+        db.collection("users").document(uid).get().addOnSuccessListener(doc -> {
+            if (doc.exists()) {
+                long currentXp = doc.getLong("xp") != null ? doc.getLong("xp") : 0;
+                long nextLevelXp = doc.getLong("nextLevelXp") != null ? doc.getLong("nextLevelXp") : 100;
+                long level = doc.getLong("level") != null ? doc.getLong("level") : 1;
+
+                currentXp += 20; // npr. 20 XP po zadatku
+
+                if (currentXp >= nextLevelXp) {
+                    level++;
+                    currentXp = 0;
+                    db.collection("users").document(uid)
+                            .update("level", level,
+                                    "xp", currentXp,
+                                    "nextLevelXp", nextLevelXp * 1.5,
+                                    "canFightBoss", true);
+                } else {
+                    db.collection("users").document(uid)
+                            .update("xp", currentXp);
+                }
+            }
+        });
+    }
+
+    private static class TaskPagerAdapter extends FragmentStateAdapter {
         public TaskPagerAdapter(@NonNull AppCompatActivity fa) {
             super(fa);
         }
@@ -59,15 +86,15 @@ public class TaskActivity extends AppCompatActivity {
         @Override
         public Fragment createFragment(int position) {
             if (position == 0) {
-                return TaskListFragment.newInstance(false); // false = one time
+                return TaskListFragment.newInstance(false);
             } else {
-                return TaskListFragment.newInstance(true);  // true = recurring
+                return TaskListFragment.newInstance(true);
             }
         }
 
         @Override
         public int getItemCount() {
-            return 2; // dve stranice (jednokratni i ponavljajući)
+            return 2;
         }
     }
 }

@@ -63,6 +63,7 @@ public class RegisterActivity extends AppCompatActivity {
         data.put("level",1);
         data.put("title","Unranked");
         data.put("allianceId",null);
+        data.put("canFightBoss", false);
         db.collection("users").document(uid).set(data).addOnSuccessListener(aVoid->{ Toast.makeText(this,"Account created. Check your email to verify.",Toast.LENGTH_LONG).show(); auth.signOut(); finish(); })
            .addOnFailureListener(e2-> {
               e2.printStackTrace();

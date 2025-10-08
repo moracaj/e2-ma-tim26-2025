@@ -1,18 +1,32 @@
 
 package rs.ftn.rpgtracker;
-import android.graphics.Bitmap; import android.os.Bundle; import android.widget.*;
-import androidx.annotation.Nullable; import androidx.appcompat.app.AppCompatActivity;
-import com.google.firebase.firestore.DocumentReference; import com.google.firebase.firestore.DocumentSnapshot; import com.google.firebase.firestore.FirebaseFirestore;
-import java.util.HashMap; import java.util.Map;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.EmailAuthProvider;
+
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.material.chip.Chip;
 import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
-import com.google.android.material.chip.Chip;
-import androidx.core.content.ContextCompat;
-import android.content.res.ColorStateList;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 
@@ -21,7 +35,7 @@ public class ProfileActivity extends AppCompatActivity {
   String uid;
   ImageView imgAvatar,imgQr;
   TextView tvUsername,tvTitle,tvLevel,tvXP,tvPP,tvCoins;
-  Button btnGainXP,btnChangePassword;
+  Button btnGainXP,btnChangePassword, btnFightBoss;
   FirebaseAuth auth;
   ProgressBar progressXP;
 
@@ -44,6 +58,8 @@ public class ProfileActivity extends AppCompatActivity {
     btnChangePassword=findViewById(R.id.btnChangePassword);
     btnGainXP.setOnClickListener(v->gainXP(50));
     btnChangePassword.setOnClickListener(v -> showChangePasswordDialog());
+    btnFightBoss = findViewById(R.id.btnFightBoss);
+    btnFightBoss.setOnClickListener(v -> tryStartBossFight());
     load();
   }
   private void load(){ db.collection("users").document(uid).get().addOnSuccessListener(this::show); }
@@ -124,12 +140,12 @@ public class ProfileActivity extends AppCompatActivity {
       xp += amount;
       int needed = LevelCalculator.xpForLevel(level);
 
-      String newTitle = null; // <--- NOVO
+      String newTitle = null;
 
       while (xp >= needed) {
         level += 1;
         pp += LevelCalculator.ppForLevelReward(level - 1);
-        newTitle = LevelCalculator.titleForLevel(level-1); // <--- NOVO
+        newTitle = LevelCalculator.titleForLevel(level-1);
         needed = LevelCalculator.xpForLevel(level);
       }
 
@@ -137,7 +153,7 @@ public class ProfileActivity extends AppCompatActivity {
       upd.put("xp", xp);
       upd.put("pp", pp);
       upd.put("level", level);
-      if (newTitle != null) upd.put("title", newTitle); // <--- NOVO
+      if (newTitle != null) upd.put("title", newTitle);
 
       ref.update(upd).addOnSuccessListener(a -> load());
     });
@@ -210,6 +226,50 @@ public class ProfileActivity extends AppCompatActivity {
 
     dlg.show();
   }
+  private void tryStartBossFight() {
+    db.collection("users").document(uid).get()
+            .addOnCompleteListener(task -> {
+              if (task == null) {
+                Toast.makeText(this, "Firestore task je null.", Toast.LENGTH_SHORT).show();
+                return;
+              }
+
+              if (!task.isSuccessful()) {
+                Exception e = task.getException();
+                Toast.makeText(this, "Firestore nije uspeo: " + (e != null ? e.getMessage() : "Nepoznata greška"), Toast.LENGTH_LONG).show();
+                if (e != null) e.printStackTrace();
+                return;
+              }
+
+              DocumentSnapshot doc = task.getResult();
+              if (doc == null) {
+                Toast.makeText(this, "Greška: nema rezultata iz Firestore-a.", Toast.LENGTH_SHORT).show();
+                return;
+              }
+
+              if (!doc.exists()) {
+                Toast.makeText(this, "Dokument korisnika ne postoji u bazi.", Toast.LENGTH_SHORT).show();
+                return;
+              }
+
+              try {
+                Boolean canFightBoss = doc.getBoolean("canFightBoss");
+
+                if (Boolean.TRUE.equals(canFightBoss)) {
+                  Intent intent = new Intent(ProfileActivity.this, BattleActivity.class);
+                  startActivity(intent);
+                } else {
+                  Toast.makeText(this, "Nisi još spreman da se boriš sa bossom!", Toast.LENGTH_SHORT).show();
+                }
+              } catch (Exception e) {
+                Toast.makeText(this, "Greška u obradi podataka: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                e.printStackTrace();
+              }
+            });
+  }
+
+
+
 
 
 

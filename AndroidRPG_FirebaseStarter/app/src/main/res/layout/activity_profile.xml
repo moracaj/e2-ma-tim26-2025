@@ -75,5 +75,15 @@
       android:layout_height="wrap_content"
       android:text="(Demo) Gain 50 XP"/>
 
+  <Button
+      android:id="@+id/btnFightBoss"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="Fight Boss"
+      android:textStyle="bold"
+      android:textColor="#FFFFFF"
+      android:backgroundTint="#D32F2F" />
+
+
 </LinearLayout>
 </ScrollView>
