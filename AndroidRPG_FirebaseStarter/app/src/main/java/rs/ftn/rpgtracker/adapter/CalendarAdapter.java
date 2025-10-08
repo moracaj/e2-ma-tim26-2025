@@ -57,7 +57,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.DayVie
         SimpleDateFormat sdfDay = new SimpleDateFormat("d", Locale.getDefault());
         holder.tvDayNumber.setText(sdfDay.format(date));
 
-        // obriši stare taskove iz holdera
+        // obrisi stare taskove iz holdera
         holder.layoutTasks.removeAllViews();
 
         List<Task> tasksForDay = getTasksForDate(date);

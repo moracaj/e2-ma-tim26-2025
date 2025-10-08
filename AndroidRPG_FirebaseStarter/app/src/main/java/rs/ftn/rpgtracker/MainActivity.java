@@ -50,8 +50,7 @@ public class MainActivity extends AppCompatActivity {
     btnLogout=findViewById(R.id.btnLogout);
     btnCategory = findViewById(R.id.btnCategory);
     btnTask = findViewById(R.id.btnTask);
-    Button btnEquipment = findViewById(R.id.btnEquipment);
-    btnEquipment.setOnClickListener(v -> startActivity(new Intent(this, EquipmentActivity.class)));
+
     Button btnStats = findViewById(R.id.btnStatistics);
     btnStats.setOnClickListener(v -> startActivity(new Intent(this, StatisticsActivity.class)));
 
@@ -62,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
     btnLogout.setOnClickListener(v->{ Prefs.clear(this); FirebaseAuth.getInstance().signOut(); Toast.makeText(this,"Logged out",Toast.LENGTH_SHORT).show(); startActivity(new Intent(this, LoginActivity.class)); finish(); });
     btnTask.setOnClickListener(v->startActivity(new Intent(this, TaskActivity.class)));
     btnCategory.setOnClickListener(v->startActivity(new Intent(this, CategoryActivity.class)));
+
 
     //LiveNotifications.stop();
   }

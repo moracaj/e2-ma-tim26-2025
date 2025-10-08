@@ -21,11 +21,9 @@ import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.DateValidatorPointForward;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -38,6 +36,7 @@ import rs.ftn.rpgtracker.model.Category;
 import rs.ftn.rpgtracker.model.Task;
 
 public class NewTaskActivity extends AppCompatActivity {
+
     private Spinner spinnerCategory, spinnerDifficulty, spinnerImportance, spinnerRepeatUnit;
     private EditText taskName, description, etRepeatInterval;
     private Button btnExecutionTime, btnDateRange, btnSaveTask;
@@ -51,12 +50,13 @@ public class NewTaskActivity extends AppCompatActivity {
     private String startDateStr, endDateStr, taskId;
     private Task currentTask;
 
+    private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_task);
 
-        // Inicijalizacija UI
         spinnerCategory = findViewById(R.id.spinnerCategory);
         spinnerDifficulty = findViewById(R.id.spinnerDifficulty);
         spinnerImportance = findViewById(R.id.spinnerImportance);
@@ -71,31 +71,29 @@ public class NewTaskActivity extends AppCompatActivity {
         spinnerRepeatUnit = findViewById(R.id.spinnerRepeatUnit);
         btnSaveTask = findViewById(R.id.btnSaveTask);
 
-
         db = FirebaseFirestore.getInstance();
 
         // Adapteri
-        ArrayAdapter<Task.Difficulty> difficultyAdapter = new ArrayAdapter<>(
-                this, android.R.layout.simple_spinner_item, Task.Difficulty.values());
-        difficultyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerDifficulty.setAdapter(difficultyAdapter);
+        ArrayAdapter<Task.Difficulty> diffAdapter =
+                new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, Task.Difficulty.values());
+        diffAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerDifficulty.setAdapter(diffAdapter);
 
-        ArrayAdapter<Task.Importance> importanceAdapter = new ArrayAdapter<>(
-                this, android.R.layout.simple_spinner_item, Task.Importance.values());
-        importanceAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerImportance.setAdapter(importanceAdapter);
+        ArrayAdapter<Task.Importance> impAdapter =
+                new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, Task.Importance.values());
+        impAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerImportance.setAdapter(impAdapter);
 
-        ArrayAdapter<CharSequence> repeatUnitAdapter = ArrayAdapter.createFromResource(
-                this, R.array.repeat_units, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> repeatUnitAdapter =
+                ArrayAdapter.createFromResource(this, R.array.repeat_units, android.R.layout.simple_spinner_item);
         repeatUnitAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerRepeatUnit.setAdapter(repeatUnitAdapter);
 
         loadCategoriesFromDb();
-        setExecutinonTime();
+        setExecutionTime();
         setFrequencyListener();
         setDateRange();
 
-        // Proveri da li je edit mod
         taskId = getIntent().getStringExtra("taskId");
         if (taskId != null) {
             loadTaskDataForEdit();
@@ -121,7 +119,6 @@ public class NewTaskActivity extends AppCompatActivity {
                 if (selection != null) {
                     Long startMillis = selection.first;
                     Long endMillis = selection.second;
-                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
                     startDateStr = sdf.format(new Date(startMillis));
                     endDateStr = sdf.format(new Date(endMillis));
                     btnDateRange.setText(startDateStr + " - " + endDateStr);
@@ -140,7 +137,7 @@ public class NewTaskActivity extends AppCompatActivity {
         });
     }
 
-    private void setExecutinonTime() {
+    private void setExecutionTime() {
         btnExecutionTime.setOnClickListener(v -> {
             Calendar calendar = Calendar.getInstance();
             int hour = calendar.get(Calendar.HOUR_OF_DAY);
@@ -148,8 +145,8 @@ public class NewTaskActivity extends AppCompatActivity {
 
             new TimePickerDialog(
                     NewTaskActivity.this,
-                    (view, selectedHour, selectedMinute) -> {
-                        String time = String.format(Locale.getDefault(), "%02d:%02d", selectedHour, selectedMinute);
+                    (view, h, m) -> {
+                        String time = String.format(Locale.getDefault(), "%02d:%02d", h, m);
                         btnExecutionTime.setText(time);
                     },
                     hour, minute, true
@@ -168,7 +165,7 @@ public class NewTaskActivity extends AppCompatActivity {
         }
 
         db.collection("categories")
-                .whereEqualTo("userId", uid)   // 🔹 samo kategorije trenutnog korisnika
+                .whereEqualTo("userId", uid)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -178,47 +175,57 @@ public class NewTaskActivity extends AppCompatActivity {
                             String name = doc.getString("name");
                             Long colorLong = doc.getLong("color");
                             int color = (colorLong != null) ? colorLong.intValue() : 0;
-
-                            //uzimamo userId iz dokumenta (sigurnosti radi)
                             String ownerId = doc.getString("userId");
                             categories.add(new Category(id, name, color, ownerId));
                         }
-                        CategoryAdapter adapter = new CategoryAdapter(this, categories);
-                        spinnerCategory.setAdapter(adapter);
-                    } else {
-                        Toast.makeText(this, "Error loading categories", Toast.LENGTH_SHORT).show();
+                        spinnerCategory.setAdapter(new CategoryAdapter(this, categories));
                     }
                 });
     }
 
-
     private void loadTaskDataForEdit() {
-        DocumentReference docRef = db.collection("tasks").document(taskId);
-        docRef.get().addOnSuccessListener(doc -> {
-            if (doc.exists()) {
-                currentTask = doc.toObject(Task.class);
-                if (currentTask != null) {
-                    taskName.setText(currentTask.getName());
-                    description.setText(currentTask.getDescription());
-                    btnExecutionTime.setText(currentTask.getExecutionTime());
+        db.collection("tasks").document(taskId).get()
+                .addOnSuccessListener(doc -> {
+                    if (doc.exists()) {
+                        currentTask = doc.toObject(Task.class);
+                        if (currentTask != null) {
+                            taskName.setText(currentTask.getName());
+                            description.setText(currentTask.getDescription());
+                            btnExecutionTime.setText(currentTask.getExecutionTime());
+                            spinnerDifficulty.setSelection(currentTask.getDifficulty().ordinal());
+                            spinnerImportance.setSelection(currentTask.getImportance().ordinal());
 
-                    spinnerDifficulty.setSelection(currentTask.getDifficulty().ordinal());
-                    spinnerImportance.setSelection(currentTask.getImportance().ordinal());
+                            if (currentTask.isRecurring()) {
+                                rbRecurring.setChecked(true);
+                                layoutRecurring.setVisibility(View.VISIBLE);
+                                etRepeatInterval.setText(String.valueOf(currentTask.getRepeatInterval()));
+                                spinnerRepeatUnit.setSelection(
+                                        currentTask.getRepeatUnit() == Task.RepeatUnit.DAY ? 0 : 1
+                                );
+                                startDateStr = sdf.format(currentTask.getStartDate());
+                                endDateStr = sdf.format(currentTask.getEndDate());
+                                btnDateRange.setText(startDateStr + " - " + endDateStr);
+                            }
 
-                    if (currentTask.isRecurring()) {
-                        rbRecurring.setChecked(true);
-                        layoutRecurring.setVisibility(View.VISIBLE);
-                        etRepeatInterval.setText(String.valueOf(currentTask.getRepeatInterval()));
-                        spinnerRepeatUnit.setSelection(currentTask.getRepeatUnit() == Task.RepeatUnit.DAY ? 0 : 1);
-
-                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-                        startDateStr = sdf.format(currentTask.getStartDate());
-                        endDateStr = sdf.format(currentTask.getEndDate());
-                        btnDateRange.setText(startDateStr + " - " + endDateStr);
+                            if (currentTask.getStatus() == Task.Status.COMPLETED ||
+                                    !currentTask.canBeUpdated(new Date())) {
+                                disableEditing();
+                            }
+                        }
                     }
-                }
-            }
-        });
+                });
+    }
+
+    private void disableEditing() {
+        taskName.setEnabled(false);
+        description.setEnabled(false);
+        btnExecutionTime.setEnabled(false);
+        spinnerDifficulty.setEnabled(false);
+        spinnerImportance.setEnabled(false);
+        btnDateRange.setEnabled(false);
+        btnSaveTask.setEnabled(false);
+        etRepeatInterval.setEnabled(false);
+        spinnerRepeatUnit.setEnabled(false);
     }
 
     private void saveOrUpdateTask() {
@@ -228,26 +235,7 @@ public class NewTaskActivity extends AppCompatActivity {
         Task.Difficulty selectedDifficulty = (Task.Difficulty) spinnerDifficulty.getSelectedItem();
         Task.Importance selectedImportance = (Task.Importance) spinnerImportance.getSelectedItem();
         String executionTime = btnExecutionTime.getText().toString();
-
         boolean isRecurring = rbRecurring.isChecked();
-        int repeatInterval = 0;
-        Task.RepeatUnit repeatUnit = null;
-        Date startDate = null, endDate = null;
-
-        if (isRecurring) {
-            String intervalStr = etRepeatInterval.getText().toString();
-            repeatInterval = TextUtils.isEmpty(intervalStr) ? 1 : Integer.parseInt(intervalStr);
-            String unitStr = spinnerRepeatUnit.getSelectedItem().toString();
-            repeatUnit = unitStr.equals("Day") ? Task.RepeatUnit.DAY : Task.RepeatUnit.WEEK;
-
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-            try {
-                startDate = sdf.parse(startDateStr);
-                endDate = sdf.parse(endDateStr);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        }
 
         if (TextUtils.isEmpty(name)) {
             Toast.makeText(this, "Name required", Toast.LENGTH_SHORT).show();
@@ -256,29 +244,45 @@ public class NewTaskActivity extends AppCompatActivity {
 
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
+        Date startDate = null, endDate = null;
+        int repeatInterval = 0;
+        Task.RepeatUnit repeatUnit = null;
+
+        if (isRecurring) {
+            try {
+                startDate = sdf.parse(startDateStr);
+                endDate = sdf.parse(endDateStr);
+            } catch (Exception e) {
+                Toast.makeText(this, "Select valid start and end dates", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            String intervalStr = etRepeatInterval.getText().toString();
+            repeatInterval = TextUtils.isEmpty(intervalStr) ? 1 : Integer.parseInt(intervalStr);
+            String unitStr = spinnerRepeatUnit.getSelectedItem().toString();
+            repeatUnit = unitStr.equals("Day") ? Task.RepeatUnit.DAY : Task.RepeatUnit.WEEK;
+        } else {
+            // danasnji datum za jednokratne
+            Date today = new Date();
+            startDate = today;
+            endDate = today;
+        }
 
         if (taskId == null) {
-
-            // NOVI
             Task task = new Task(
-                    name, desc, selectedCategory,
-                    isRecurring, startDate, endDate,
-                    repeatInterval, repeatUnit, executionTime,
-                    selectedDifficulty, selectedImportance, uid
+                    name, desc, selectedCategory, isRecurring,
+                    startDate, endDate, repeatInterval, repeatUnit,
+                    executionTime, selectedDifficulty, selectedImportance, uid
             );
+
             db.collection("tasks").document(task.getId())
                     .set(task)
                     .addOnSuccessListener(aVoid -> {
                         Toast.makeText(this, "Task created!", Toast.LENGTH_SHORT).show();
-
-                        Intent intent = new Intent(NewTaskActivity.this, TaskActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
+                        startActivity(new Intent(this, TaskActivity.class));
                         finish();
                     });
-
         } else {
-            // IZMENI
             db.collection("tasks").document(taskId)
                     .update(
                             "name", name,
@@ -286,11 +290,11 @@ public class NewTaskActivity extends AppCompatActivity {
                             "executionTime", executionTime,
                             "difficulty", selectedDifficulty,
                             "importance", selectedImportance,
-                            "repeatInterval", repeatInterval,
-                            "repeatUnit", repeatUnit != null ? repeatUnit.toString() : null,
+                            "isRecurring", isRecurring,
                             "startDate", startDate,
                             "endDate", endDate,
-                            "userId", uid
+                            "repeatInterval", repeatInterval,
+                            "repeatUnit", repeatUnit != null ? repeatUnit.toString() : null
                     )
                     .addOnSuccessListener(aVoid -> {
                         Toast.makeText(this, "Task updated!", Toast.LENGTH_SHORT).show();
@@ -300,7 +304,7 @@ public class NewTaskActivity extends AppCompatActivity {
     }
 
     private Category getSelectedCategory() {
-        int position = spinnerCategory.getSelectedItemPosition();
-        return (position >= 0 && position < categories.size()) ? categories.get(position) : null;
+        int pos = spinnerCategory.getSelectedItemPosition();
+        return (pos >= 0 && pos < categories.size()) ? categories.get(pos) : null;
     }
 }

@@ -66,25 +66,67 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
 
         holder.btnDeleteTask.setOnClickListener(v -> {
+
+            //Ne dozvoli brisanje završenih zadataka
+            if (task.getStatus() == Task.Status.COMPLETED) {
+                Toast.makeText(context, "You cannot delete completed tasks.", Toast.LENGTH_LONG).show();
+                return;
+            }
+
             new android.app.AlertDialog.Builder(context)
                     .setTitle("Delete task")
                     .setMessage("Are you sure you want to delete this task?")
                     .setPositiveButton("Yes", (dialog, which) -> {
-                        FirebaseFirestore.getInstance().collection("tasks").document(task.getId())
-                                .delete()
-                                .addOnSuccessListener(aVoid -> {
-                                    taskList.remove(holder.getAdapterPosition());
-                                    notifyItemRemoved(holder.getAdapterPosition());
-                                    Toast.makeText(context, "Task deleted", Toast.LENGTH_SHORT).show();
-                                })
-                                .addOnFailureListener(e ->
-                                        Toast.makeText(context, "Something went wrong: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+
+                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                        // Ako je zadatak ponavljajuci obrisi sva buduca ponavljanja
+                        if (task.isRecurring()) {
+                            Date now = new Date();
+
+                            db.collection("tasks")
+                                    .whereEqualTo("userId", task.getUserId())
+                                    .whereEqualTo("name", task.getName()) // ili neki sharedGroupId ako ga imaš
+                                    .whereEqualTo("recurring", true)
+                                    .get()
+                                    .addOnSuccessListener(query -> {
+                                        for (var doc : query.getDocuments()) {
+                                            Task recurringTask = doc.toObject(Task.class);
+                                            if (recurringTask != null && recurringTask.getStartDate() != null) {
+                                                if (recurringTask.getStartDate().after(now)) {
+                                                    db.collection("tasks").document(doc.getId()).delete();
+                                                }
+                                            }
+                                        }
+
+                                        // Ukloni i originalni zadatak iz prikaza
+                                        taskList.remove(holder.getAdapterPosition());
+                                        notifyItemRemoved(holder.getAdapterPosition());
+                                        Toast.makeText(context, "Future recurrences deleted.", Toast.LENGTH_SHORT).show();
+                                    })
+                                    .addOnFailureListener(e ->
+                                            Toast.makeText(context, "Error deleting recurring tasks: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                        }
+                        else {
+                            // Ako nije ponavljajuci – obrisi samo ovaj
+                            db.collection("tasks").document(task.getId())
+                                    .delete()
+                                    .addOnSuccessListener(aVoid -> {
+                                        taskList.remove(holder.getAdapterPosition());
+                                        notifyItemRemoved(holder.getAdapterPosition());
+                                        Toast.makeText(context, "Task deleted", Toast.LENGTH_SHORT).show();
+                                    })
+                                    .addOnFailureListener(e ->
+                                            Toast.makeText(context, "Something went wrong: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                        }
+
                     })
                     .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
                     .show();
         });
 
-        // 🔹 Boje za status
+
+        // Boje za status
         switch (task.getStatus()) {
             case COMPLETED:
                 holder.tvTaskStatus.setTextColor(context.getResources().getColor(android.R.color.holo_green_dark));
