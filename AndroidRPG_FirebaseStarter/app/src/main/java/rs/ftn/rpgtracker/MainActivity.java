@@ -52,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
     btnTask = findViewById(R.id.btnTask);
     Button btnEquipment = findViewById(R.id.btnEquipment);
     btnEquipment.setOnClickListener(v -> startActivity(new Intent(this, EquipmentActivity.class)));
+    Button btnStats = findViewById(R.id.btnStatistics);
+    btnStats.setOnClickListener(v -> startActivity(new Intent(this, StatisticsActivity.class)));
 
     btnProfile.setOnClickListener(v->startActivity(new Intent(this, ProfileActivity.class)));
     btnShop.setOnClickListener(v->startActivity(new Intent(this, ShopActivity.class)));

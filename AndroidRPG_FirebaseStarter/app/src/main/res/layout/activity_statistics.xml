@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fillViewport="true"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tvActiveDays"
+            android:text="Aktivni dani: —"
+            android:textSize="18sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/tvCurrentStreak"
+            android:text="Trenutni niz: —"
+            android:textSize="18sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"/>
+
+        <TextView
+            android:id="@+id/tvBestStreak"
+            android:text="Najduži niz: —"
+            android:textSize="18sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Donut: urađeni / neurađeni / otkazani / ukupno kreirani -->
+        <TextView
+            android:text="Zadaci po statusu"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/chartStatusDonut"
+            android:layout_width="match_parent"
+            android:layout_height="260dp"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Bar: završeni po kategoriji -->
+        <TextView
+            android:text="Završeni zadaci po kategoriji"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <com.github.mikephil.charting.charts.BarChart
+            android:id="@+id/chartCategoryBar"
+            android:layout_width="match_parent"
+            android:layout_height="260dp"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Line: prosečna težina završenih (po danima) -->
+        <TextView
+            android:text="Prosečna težina (po danima)"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/chartAvgDifficulty"
+            android:layout_width="match_parent"
+            android:layout_height="260dp"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Line: XP u poslednjih 7 dana -->
+        <TextView
+            android:text="XP u poslednjih 7 dana"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/chartXpLast7"
+            android:layout_width="match_parent"
+            android:layout_height="260dp"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Specijalne misije -->
+        <TextView
+            android:id="@+id/tvSpecialMissions"
+            android:text="Specijalne misije: započete — / završene —"
+            android:textSize="16sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"/>
+
+    </LinearLayout>
+</ScrollView>
