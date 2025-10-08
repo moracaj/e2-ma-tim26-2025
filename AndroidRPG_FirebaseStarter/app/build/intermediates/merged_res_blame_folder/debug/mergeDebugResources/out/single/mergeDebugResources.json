@@ -4,6 +4,14 @@
         "source": "rs.ftn.rpgtracker.app-main-48:/layout/item_message_left.xml"
     },
     {
+        "merged": "rs.ftn.rpgtracker.app-debug-46:/drawable_sword_icon.png.flat",
+        "source": "rs.ftn.rpgtracker.app-main-48:/drawable/sword_icon.png"
+    },
+    {
+        "merged": "rs.ftn.rpgtracker.app-debug-46:/drawable_cloak_icon.png.flat",
+        "source": "rs.ftn.rpgtracker.app-main-48:/drawable/cloak_icon.png"
+    },
+    {
         "merged": "rs.ftn.rpgtracker.app-debug-46:/layout_activity_chat.xml.flat",
         "source": "rs.ftn.rpgtracker.app-main-48:/layout/activity_chat.xml"
     },
@@ -60,12 +68,28 @@
         "source": "rs.ftn.rpgtracker.app-main-48:/layout/activity_login.xml"
     },
     {
+        "merged": "rs.ftn.rpgtracker.app-debug-46:/drawable_chest_closed.png.flat",
+        "source": "rs.ftn.rpgtracker.app-main-48:/drawable/chest_closed.png"
+    },
+    {
         "merged": "rs.ftn.rpgtracker.app-debug-46:/layout_activity_calendar.xml.flat",
         "source": "rs.ftn.rpgtracker.app-main-48:/layout/activity_calendar.xml"
     },
     {
+        "merged": "rs.ftn.rpgtracker.app-debug-46:/drawable_boss_hit.png.flat",
+        "source": "rs.ftn.rpgtracker.app-main-48:/drawable/boss_hit.png"
+    },
+    {
+        "merged": "rs.ftn.rpgtracker.app-debug-46:/drawable_chest_open.png.flat",
+        "source": "rs.ftn.rpgtracker.app-main-48:/drawable/chest_open.png"
+    },
+    {
         "merged": "rs.ftn.rpgtracker.app-debug-46:/layout_item_inventory_equipment.xml.flat",
         "source": "rs.ftn.rpgtracker.app-main-48:/layout/item_inventory_equipment.xml"
+    },
+    {
+        "merged": "rs.ftn.rpgtracker.app-debug-46:/drawable_boss_idle.png.flat",
+        "source": "rs.ftn.rpgtracker.app-main-48:/drawable/boss_idle.png"
     },
     {
         "merged": "rs.ftn.rpgtracker.app-debug-46:/layout_item_category.xml.flat",
@@ -82,6 +106,10 @@
     {
         "merged": "rs.ftn.rpgtracker.app-debug-46:/layout_item_message_right.xml.flat",
         "source": "rs.ftn.rpgtracker.app-main-48:/layout/item_message_right.xml"
+    },
+    {
+        "merged": "rs.ftn.rpgtracker.app-debug-46:/layout_activity_battle.xml.flat",
+        "source": "rs.ftn.rpgtracker.app-main-48:/layout/activity_battle.xml"
     },
     {
         "merged": "rs.ftn.rpgtracker.app-debug-46:/layout_activity_profile.xml.flat",
