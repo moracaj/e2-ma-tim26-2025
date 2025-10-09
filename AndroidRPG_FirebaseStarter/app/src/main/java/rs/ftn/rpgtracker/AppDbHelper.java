@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class AppDbHelper extends SQLiteOpenHelper {
   public static final String DB_NAME = "rpgtracker.db";
   // ↑ podigni verziju
-  public static final int DB_VERSION = 2;
+  public static final int DB_VERSION = 4;
 
   public AppDbHelper(Context c){ super(c, DB_NAME, null, DB_VERSION); }
 
@@ -28,20 +28,33 @@ public class AppDbHelper extends SQLiteOpenHelper {
     );
 
     // Inventar igrača
+//    db.execSQL(
+//            "CREATE TABLE inventory (" +
+//                    " id INTEGER PRIMARY KEY AUTOINCREMENT," +
+//                    " type TEXT NOT NULL," +
+//                    " name TEXT NOT NULL," +
+//                    " bonus_type TEXT NOT NULL," +
+//                    " bonus_value REAL NOT NULL," +
+//                    " duration_battles INTEGER NOT NULL," +  // za ARMOR: koliko traje kad se aktivira
+//                    " permanent INTEGER NOT NULL," +          // 1 = trajno (potion perm / weapon)
+//                    " level INTEGER DEFAULT 0," +             // za oružje upgrade nivo
+//                    " equipped INTEGER DEFAULT 0," +          // 1 = aktivirano (potion-next-battle / armor aktivan)
+//                    " remaining_battles INTEGER" +            // ARMOR: preostale borbe od trenutne aktivacije
+//                    ")"
+//    );
+
     db.execSQL(
-            "CREATE TABLE inventory (" +
-                    " id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    " type TEXT NOT NULL," +
-                    " name TEXT NOT NULL," +
-                    " bonus_type TEXT NOT NULL," +
-                    " bonus_value REAL NOT NULL," +
-                    " duration_battles INTEGER NOT NULL," +  // za ARMOR: koliko traje kad se aktivira
-                    " permanent INTEGER NOT NULL," +          // 1 = trajno (potion perm / weapon)
-                    " level INTEGER DEFAULT 0," +             // za oružje upgrade nivo
-                    " equipped INTEGER DEFAULT 0," +          // 1 = aktivirano (potion-next-battle / armor aktivan)
-                    " remaining_battles INTEGER" +            // ARMOR: preostale borbe od trenutne aktivacije
+            "CREATE TABLE IF NOT EXISTS inventory (" +
+                    "  id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "  user_uid TEXT," +
+                    "  equipment_id INTEGER NOT NULL," +
+                    "  permanent INTEGER NOT NULL DEFAULT 0," +
+                    "  level INTEGER NOT NULL DEFAULT 0," +
+                    "  active INTEGER NOT NULL DEFAULT 0," +            // OVO je ključno
+                    "  expires_after_battles INTEGER" +                 // I OVO
                     ")"
     );
+
 
     // Inicijalni katalog (cene za demo su fiksne; možeš i dinamički da računaš u Shop-u)
     db.execSQL(
@@ -57,15 +70,23 @@ public class AppDbHelper extends SQLiteOpenHelper {
     );
   }
 
-  @Override public void onUpgrade(SQLiteDatabase db, int oldV, int newV){
-    if (oldV < 2) {
-      // Dodaj nove kolone u inventory ako nedostaju
-      db.execSQL("ALTER TABLE inventory ADD COLUMN equipped INTEGER DEFAULT 0");
-      db.execSQL("ALTER TABLE inventory ADD COLUMN remaining_battles INTEGER");
-      // Ubaci Bow u katalog ako ga nema
-      db.execSQL("INSERT INTO equipment_catalog(type,name,bonus_type,bonus_value,price,duration_battles,permanent,upgradeable) " +
-              "SELECT 'weapon','Bow +5% coins','coin_perm_percent',5,0,0,1,1 " +
-              "WHERE NOT EXISTS (SELECT 1 FROM equipment_catalog WHERE name='Bow +5% coins')");
+  @Override
+  public void onUpgrade(SQLiteDatabase db, int oldV, int newV) {
+    if (oldV < 4) {
+      db.execSQL("DROP TABLE IF EXISTS inventory");
+      db.execSQL(
+              "CREATE TABLE inventory (" +
+                      "  id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                      "  user_uid TEXT," +
+                      "  equipment_id INTEGER NOT NULL," +
+                      "  permanent INTEGER NOT NULL DEFAULT 0," +
+                      "  level INTEGER NOT NULL DEFAULT 0," +
+                      "  active INTEGER NOT NULL DEFAULT 0," +
+                      "  expires_after_battles INTEGER" +
+                      ")"
+      );
     }
   }
+
+
 }

@@ -175,6 +175,7 @@ public class BattleActivity extends AppCompatActivity implements SensorEventList
 
         db.collection("users").document(uid).update(updates)
                 .addOnSuccessListener(a -> Toast.makeText(this, "Data updated!", Toast.LENGTH_SHORT).show());
+        EquipmentOps.settleAfterBoss(this);
 
         if (bossHp <= 0) {
             db.collection("users").document(uid)

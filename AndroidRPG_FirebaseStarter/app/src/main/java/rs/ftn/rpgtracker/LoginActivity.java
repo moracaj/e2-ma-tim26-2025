@@ -55,6 +55,8 @@ public class LoginActivity extends AppCompatActivity {
                 return;
             }
             Prefs.setUid(this, u.getUid());
+            LiveNotifications.resetLocalNotifState(this);
+            LiveNotifications.start(this);
             startActivity(new Intent(this, MainActivity.class));
             finish();
         }).addOnFailureListener(e1 -> Toast.makeText(this, e1.getMessage(), Toast.LENGTH_LONG).show());

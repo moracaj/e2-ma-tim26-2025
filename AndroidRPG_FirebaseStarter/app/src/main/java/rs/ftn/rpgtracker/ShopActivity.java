@@ -165,8 +165,8 @@ public class ShopActivity extends AppCompatActivity {
 
     // primer helper metoda u ShopActivity
     private void insertIntoInventoryFromCatalog(SQLiteDatabase db, int catalogId){
-        db.execSQL("INSERT INTO inventory(type,name,bonus_type,bonus_value,duration_battles,permanent,level,equipped,remaining_battles) " +
-                        "SELECT type,name,bonus_type,bonus_value,duration_battles,permanent,0,0,NULL FROM equipment_catalog WHERE id=?",
+        db.execSQL("INSERT INTO inventory(equipment_id, user_uid, permanent, level, active, expires_after_battles)\n" +
+                        "SELECT id, ?, permanent, 0, 0, NULL FROM equipment_catalog WHERE id=?\n",
                 new Object[]{ catalogId });
     }
 
